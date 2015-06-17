@@ -9,7 +9,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -20,13 +21,13 @@ import static org.junit.Assert.assertTrue;
 @RunWith(RobolectricGradleTestRunner.class)
 public class TournamentTest {
     private SwissTournament t;
-    Vector<Player> players;
+    List<Player> players;
 
     @Before
     public void setup() throws Exception {
         t = new SwissTournament();
         assertNotNull("Tournament could not be created", t);
-        players = new Vector<Player>();
+        players = new ArrayList<Player>();
         for (int i = 0; i < 16; i++) {
             players.add(new Player("p" + (i + 1)));
         }
@@ -40,41 +41,41 @@ public class TournamentTest {
 
     @Test
     public void canAddPlayerTest() throws Exception {
-        t.addPlayer(players.elementAt((0)));
+        t.addPlayer(players.get(0));
         assertFalse(t.canStartTournament());
     }
 
     @Test
     public void canNotStartTournamentWithLessThanTwoPlayersTest() throws Exception {
         assertFalse(t.canStartTournament());
-        t.addPlayer(players.elementAt((0)));
+        t.addPlayer(players.get(0));
         assertFalse(t.canStartTournament());
     }
 
     @Test
     public void canStartTournamentWithTwoOrMorePlayersTest() throws Exception {
-        t.addPlayer(players.elementAt((0)));
+        t.addPlayer(players.get(0));
         for(int i = 1; i < 4; i++){
-            t.addPlayer(players.elementAt((i)));
+            t.addPlayer(players.get(i));
             assertTrue(t.canStartTournament());
         }
     }
 
     @Test
     public void canNotAddAPlayerTwiceTest(){
-        t.addPlayer(players.elementAt(0));
-        t.addPlayer(players.elementAt(0));
+        t.addPlayer(players.get(0));
+        t.addPlayer(players.get(0));
         assertEquals(1, t.registeredPlayerCount());
     }
 
     @Test
     public void canPlayRoundWithTwoPlayersTest() throws Exception {
         for(int i = 0; i < 2; i++){
-            t.addPlayer(players.elementAt(i));
+            t.addPlayer(players.get(i));
         }
         assertTrue(t.canStartNextRound());
         t.startNextRound();
-        t.enterResult(players.elementAt(0), 3, players.elementAt(1), 2);
+        t.enterResult(players.get(0), 3, players.get(1), 2);
         assertTrue(t.canStartNextRound());
     }
 }

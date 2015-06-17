@@ -1,19 +1,20 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sh4ke on 17.06.15.
  */
 public class SwissTournament {
 
-    private Vector<Player> players;
-    private Vector<Round> finishedRounds;
+    private List<Player> players;
+    private List<Round> finishedRounds;
     private Round currentRound;
 
     public SwissTournament() {
-        players = new Vector<Player>();
-        finishedRounds = new Vector<Round>();
+        players = new ArrayList<Player>();
+        finishedRounds = new ArrayList<Round>();
     }
 
     public void addPlayer(Player p) {
