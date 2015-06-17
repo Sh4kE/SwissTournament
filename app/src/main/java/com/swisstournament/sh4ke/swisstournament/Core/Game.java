@@ -1,7 +1,5 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
-import com.swisstournament.sh4ke.swisstournament.Core.Exceptions.NotFinishedException;
-
 import java.security.InvalidParameterException;
 
 /**
@@ -10,20 +8,14 @@ import java.security.InvalidParameterException;
 public class Game {
 
 
-    Player p1, p2;
-    int won_p1, won_p2;
+    private Player p1, p2;
+    private int won_p1, won_p2;
+    private boolean finished;
 
     public Game(Player p1, Player p2) {
         this.p1 = p1;
         this.p2 = p2;
-    }
-
-    public Player getP1() {
-        return p1;
-    }
-
-    public Player getP2() {
-        return p2;
+        this.finished = false;
     }
 
     public void enterResult(int won_p1, int won_p2) throws InvalidParameterException {
@@ -37,30 +29,39 @@ public class Game {
             throw new InvalidParameterException("both results cannot be 3 or greater!");
         this.won_p1 = won_p1;
         this.won_p2 = won_p2;
+        this.finished = true;
     }
 
     public boolean isFinished() {
-        return won_p1 != 0 || won_p2 != 0;
+        return finished;
     }
 
-    public Player getWinner() throws NotFinishedException {
+    public Player getWinner() throws Exception {
         if (!isFinished()) {
-            throw new NotFinishedException("this game is not played yet");
+            throw new Exception("this game is not played yet");
         }
         return (won_p1 > won_p2) ? p1 : p2;
     }
 
-    public Player getLoser() throws NotFinishedException {
+    public Player getLoser() throws Exception {
         if (!isFinished()) {
-            throw new NotFinishedException("this game is not played yet");
+            throw new Exception("this game is not played yet");
         }
         return (won_p1 < won_p2) ? p1 : p2;
     }
 
-    public int getLosersWonGames() throws NotFinishedException {
+    public int getLosersWonGames() throws Exception {
         if (isFinished()) {
             return (won_p1 < won_p2) ? won_p1 : won_p2;
         }
-        throw new NotFinishedException("this game is not played yet");
+        throw new Exception("this game is not played yet");
+    }
+
+    public Player getP1() {
+        return p1;
+    }
+
+    public Player getP2() {
+        return p2;
     }
 }

@@ -62,15 +62,15 @@ public class TournamentTest {
 
     @Test
     public void canNotAddAPlayerTwiceTest(){
-        t.addPlayer(players.elementAt((0)));
-        t.addPlayer(players.elementAt((0)));
+        t.addPlayer(players.elementAt(0));
+        t.addPlayer(players.elementAt(0));
         assertEquals(1, t.registeredPlayerCount());
     }
 
     @Test
-    public void canPlayRoundWithTwoPlayersTest(){
-        for(int i = 1; i < 2; i++){
-            t.addPlayer(players.elementAt((i)));
+    public void canPlayRoundWithTwoPlayersTest() throws Exception {
+        for(int i = 0; i < 2; i++){
+            t.addPlayer(players.elementAt(i));
         }
         assertTrue(t.canStartNextRound());
         t.startNextRound();

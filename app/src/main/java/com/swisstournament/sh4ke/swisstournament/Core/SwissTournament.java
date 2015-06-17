@@ -1,7 +1,5 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
-import com.swisstournament.sh4ke.swisstournament.Core.Exceptions.PlayerNotFoundException;
-
 import java.util.Vector;
 
 /**
@@ -16,7 +14,6 @@ public class SwissTournament {
     public SwissTournament() {
         players = new Vector<Player>();
         finishedRounds = new Vector<Round>();
-        currentRound = new Round(players);
     }
 
     public void addPlayer(Player p) {
@@ -34,23 +31,42 @@ public class SwissTournament {
     }
 
     public boolean canStartNextRound() {
-        return currentRound.isFinished();
+
+        if (currentRound != null) {
+            return currentRound.isFinished();
+        } else if (players.size() >= 2) {
+            return true;
+        }
+        return false;
     }
 
-    public boolean startNextRound() {
+    /**
+     * Starts the next round with all currently registered players.
+     *
+     * @return true if the creation succeeded.
+     */
+    public void startNextRound() throws Exception{
         if (!canStartNextRound()) {
-            return false;
+            if (players.size() < 2){
+                throw new Exception("Not enough players to start tournament");
+            }else {
+                throw new Exception("Round not Finished");
+            }
         }
-        return true;
+        currentRound = new Round(players);
+        currentRound.start();
     }
 
     public boolean enterResult(Player p1, int won_p1, Player p2, int won_p2) {
-        try {
-            currentRound.getGame(p1, p2).enterResult(won_p1, won_p2);
-        } catch (PlayerNotFoundException e) {
-            e.printStackTrace();
-            return false;
+        if (currentRound.isStarted()) {
+            try {
+                currentRound.enterResult(p1, won_p1, p2, won_p2);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 }
