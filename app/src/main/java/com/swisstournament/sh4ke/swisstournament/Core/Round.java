@@ -134,4 +134,13 @@ public class Round {
         }
         return true;
     }
+
+    public Game getNextGame() throws Exception {
+        for (Game game : games) {
+            if (!game.isFinished()) {
+                return game;
+            }
+        }
+        throw new Exception("All Games are Finished. Can't get next game.");
+    }
 }

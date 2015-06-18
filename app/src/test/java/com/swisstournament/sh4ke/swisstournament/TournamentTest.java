@@ -1,5 +1,6 @@
 package com.swisstournament.sh4ke.swisstournament;
 
+import com.swisstournament.sh4ke.swisstournament.Core.Game;
 import com.swisstournament.sh4ke.swisstournament.Core.Player;
 import com.swisstournament.sh4ke.swisstournament.Core.SwissTournament;
 
@@ -50,6 +51,7 @@ public class TournamentTest {
         assertFalse(t.canStartTournament());
         t.addPlayer(players.get(0));
         assertFalse(t.canStartTournament());
+        assertFalse(t.canStartNextRound());
     }
 
     @Test
@@ -76,6 +78,24 @@ public class TournamentTest {
         assertTrue(t.canStartNextRound());
         t.startNextRound();
         t.enterResult(players.get(0), 3, players.get(1), 2);
+        assertTrue(t.canStartNextRound());
+    }
+
+    @Test
+    public void canPlayRoundWithFourPlayersTest() throws Exception {
+        for(int i = 0; i < 4; i++){
+            t.addPlayer(players.get(i));
+        }
+        assertTrue(t.canStartNextRound());
+        t.startNextRound();
+        assertFalse(t.canStartNextRound());
+        while(! t.getCurrentRound().isFinished()){
+            Game g = t.getCurrentRound().getNextGame();
+            Player p1 = g.getP1();
+            Player p2 = g.getP2();
+            t.enterResult(p1, 3, p2, 2);
+        }
+
         assertTrue(t.canStartNextRound());
     }
 }

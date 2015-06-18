@@ -43,8 +43,6 @@ public class SwissTournament {
 
     /**
      * Starts the next round with all currently registered players.
-     *
-     * @return true if the creation succeeded.
      */
     public void startNextRound() throws Exception{
         if (!canStartNextRound()) {
@@ -69,5 +67,9 @@ public class SwissTournament {
             return true;
         }
         return false;
+    }
+
+    public Round getCurrentRound() {
+        return currentRound;
     }
 }
