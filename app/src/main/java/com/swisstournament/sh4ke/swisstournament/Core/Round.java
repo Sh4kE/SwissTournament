@@ -1,5 +1,6 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -97,7 +98,7 @@ public class Round {
         return players.get(r.nextInt(players.size()));
     }
 
-    public void enterResult(Player p1, int won_p1, Player p2, int won_p2) throws Exception {
+    public void enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException {
         for (int i = 0; i < games.size(); i++) {
             Game game = games.get(i);
             if ((game.getP1().equals(p1) && game.getP2().equals(p2)) || (game.getP1().equals(p2) && game.getP2().equals(p1))) {
@@ -106,7 +107,7 @@ public class Round {
                 return;
             }
         }
-        throw new Exception(String.format("Could not find game with players: (%s, %s)", p1, p2));
+        throw new InvalidParameterException(String.format("Could not find game with players: (%s, %s)", p1, p2));
     }
 
     /*private Game getGame(Player p1, Player p2) throws Exception {

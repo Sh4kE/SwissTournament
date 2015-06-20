@@ -1,5 +1,6 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +12,19 @@ public class SwissTournament {
     private List<Player> players;
     private List<Round> finishedRounds;
     private Round currentRound;
+    private boolean started;
+
 
     public SwissTournament() {
         players = new ArrayList<Player>();
         finishedRounds = new ArrayList<Round>();
+        started = false;
     }
 
     public void addPlayer(Player p) {
+        if (this.isStarted()) {
+            throw new IllegalStateException("Tournament is already started. Can't add Players any more.");
+        }
         if (!players.contains(p)) {
             players.add(p);
         }
@@ -28,15 +35,27 @@ public class SwissTournament {
     }
 
     public boolean canStartTournament() {
-        return players.size() > 1;
+        if (!this.isStarted()) {
+            return players.size() >= 2;
+        }
+        return false;
+    }
+
+    public void startTournament() {
+        if (canStartTournament()) {
+            started = true;
+        } else {
+            throw new IllegalStateException("Can't start tournament yet.");
+        }
     }
 
     public boolean canStartNextRound() {
-
-        if (currentRound != null) {
-            return currentRound.isFinished();
-        } else if (players.size() >= 2) {
-            return true;
+        if (this.isStarted()) {
+            if (currentRound != null) {
+                return currentRound.isFinished();
+            } else {
+                return true;
+            }
         }
         return false;
     }
@@ -44,26 +63,17 @@ public class SwissTournament {
     /**
      * Starts the next round with all currently registered players.
      */
-    public void startNextRound() throws Exception{
+    public void startNextRound() throws Exception {
         if (!canStartNextRound()) {
-            if (players.size() < 2){
-                throw new Exception("Not enough players to start tournament");
-            }else {
-                throw new Exception("Round not Finished");
-            }
+            throw new Exception("Round not Finished");
         }
         currentRound = new Round(players);
         currentRound.start();
     }
 
-    public boolean enterResult(Player p1, int won_p1, Player p2, int won_p2) {
+    public boolean enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException {
         if (currentRound.isStarted()) {
-            try {
-                currentRound.enterResult(p1, won_p1, p2, won_p2);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
+            currentRound.enterResult(p1, won_p1, p2, won_p2);
             return true;
         }
         return false;
@@ -71,5 +81,9 @@ public class SwissTournament {
 
     public Round getCurrentRound() {
         return currentRound;
+    }
+
+    public boolean isStarted() {
+        return started;
     }
 }

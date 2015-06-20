@@ -5,16 +5,20 @@ import com.swisstournament.sh4ke.swisstournament.Core.Player;
 import com.swisstournament.sh4ke.swisstournament.Core.SwissTournament;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -23,6 +27,9 @@ import static org.junit.Assert.assertTrue;
 public class TournamentTest {
     private SwissTournament t;
     List<Player> players;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup() throws Exception {
@@ -57,7 +64,7 @@ public class TournamentTest {
     @Test
     public void canStartTournamentWithTwoOrMorePlayersTest() throws Exception {
         t.addPlayer(players.get(0));
-        for(int i = 1; i < 4; i++){
+        for(int i = 1; i < 16; i++){
             t.addPlayer(players.get(i));
             assertTrue(t.canStartTournament());
         }
@@ -71,24 +78,16 @@ public class TournamentTest {
     }
 
     @Test
-    public void canPlayRoundWithTwoPlayersTest() throws Exception {
-        for(int i = 0; i < 2; i++){
-            t.addPlayer(players.get(i));
-        }
-        assertTrue(t.canStartNextRound());
-        t.startNextRound();
+    public void canPlayOneRoundWithTwoPlayersTest() throws Exception {
+        startRoundWithPlayers(2);
         t.enterResult(players.get(0), 3, players.get(1), 2);
         assertTrue(t.canStartNextRound());
     }
 
     @Test
-    public void canPlayRoundWithFourPlayersTest() throws Exception {
-        for(int i = 0; i < 4; i++){
-            t.addPlayer(players.get(i));
-        }
-        assertTrue(t.canStartNextRound());
-        t.startNextRound();
-        assertFalse(t.canStartNextRound());
+    public void canPlayOneRoundWithFourPlayersTest() throws Exception {
+        startRoundWithPlayers(4);
+
         while(! t.getCurrentRound().isFinished()){
             Game g = t.getCurrentRound().getNextGame();
             Player p1 = g.getP1();
@@ -97,5 +96,29 @@ public class TournamentTest {
         }
 
         assertTrue(t.canStartNextRound());
+    }
+
+    @Test(expected= InvalidParameterException.class)
+    public void canNotEnterNegativeResults(){
+        startRoundWithPlayers(2);
+        t.enterResult(players.get(0), -1, players.get(1), 2);
+        //assertFalse(t.canStartNextRound());
+    }
+
+    private void startRoundWithPlayers(int number_of_players){
+        for(int i = 0; i < number_of_players; i++){
+            t.addPlayer(players.get(i));
+        }
+        assertTrue(t.canStartTournament());
+        t.startTournament();
+        assertTrue(t.isStarted());
+
+        assertTrue(t.canStartNextRound());
+        try {
+            t.startNextRound();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertFalse(t.canStartNextRound());
     }
 }

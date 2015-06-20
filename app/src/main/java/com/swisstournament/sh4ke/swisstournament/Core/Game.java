@@ -19,7 +19,7 @@ public class Game {
     }
 
     public void enterResult(int won_p1, int won_p2) throws InvalidParameterException {
-        if (won_p1 < 0 || won_p2 < 0 )
+        if (won_p1 < 0 || won_p2 < 0)
             throw new InvalidParameterException("results cannot be negative!");
         if (won_p1 > 3 || won_p2 > 3)
             throw new InvalidParameterException("results cannot be greater than 3!");
