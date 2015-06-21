@@ -1,5 +1,6 @@
-package com.swisstournament.sh4ke.swisstournament;
+package com.swisstournament.sh4ke.swisstournament.Core;
 
+import com.swisstournament.sh4ke.swisstournament.BuildConfig;
 import com.swisstournament.sh4ke.swisstournament.Core.Game;
 import com.swisstournament.sh4ke.swisstournament.Core.Player;
 import com.swisstournament.sh4ke.swisstournament.Core.SwissTournament;
@@ -26,6 +27,11 @@ import static org.junit.Assert.assertTrue;
 public class TournamentTest {
     private SwissTournament t;
     private List<Player> players;
+
+    @Test
+    public void defaultTest() {
+
+    }
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

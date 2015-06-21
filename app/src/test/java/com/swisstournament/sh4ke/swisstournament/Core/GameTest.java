@@ -1,5 +1,6 @@
-package com.swisstournament.sh4ke.swisstournament;
+package com.swisstournament.sh4ke.swisstournament.Core;
 
+import com.swisstournament.sh4ke.swisstournament.BuildConfig;
 import com.swisstournament.sh4ke.swisstournament.Core.Game;
 import com.swisstournament.sh4ke.swisstournament.Core.Player;
 import com.swisstournament.sh4ke.swisstournament.Core.Round;
@@ -30,14 +31,14 @@ public class GameTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         p1 = new Player("p1");
         p2 = new Player("p2");
         g = new Game(p1, p2);
     }
 
     @Test
-    public void canNotEnterNegativeResultsTest(){
+    public void canNotEnterNegativeResultsTest() {
         thrown.expect(InvalidParameterException.class);
         thrown.expectMessage("results cannot be negative!");
 
@@ -45,7 +46,7 @@ public class GameTest {
     }
 
     @Test
-    public void canNotEnterResultsGreaterThanThreeTest(){
+    public void canNotEnterResultsGreaterThanThreeTest() {
         thrown.expect(InvalidParameterException.class);
         thrown.expectMessage("results cannot be greater than 3!");
 
@@ -53,7 +54,7 @@ public class GameTest {
     }
 
     @Test
-    public void canNotEnterSameResultsTwiceTest(){
+    public void canNotEnterSameResultsTwiceTest() {
         thrown.expect(InvalidParameterException.class);
         thrown.expectMessage("results cannot be equal to each other!");
 
@@ -61,7 +62,17 @@ public class GameTest {
     }
 
     @Test
-    public void getCorrectWinner1Test(){
+    public void getCorrectP1Test() {
+        assertEquals(p1, g.getP1());
+    }
+
+    @Test
+    public void getCorrectP2Test() {
+        assertEquals(p2, g.getP2());
+    }
+
+    @Test
+    public void getCorrectWinner1Test() {
         g.enterResult(3, 2);
         try {
             assertEquals(p1, g.getWinner());
@@ -71,7 +82,7 @@ public class GameTest {
     }
 
     @Test
-    public void getCorrectWinner2Test(){
+    public void getCorrectWinner2Test() {
         g.enterResult(2, 3);
         try {
             assertEquals(p2, g.getWinner());
@@ -81,7 +92,7 @@ public class GameTest {
     }
 
     @Test
-    public void getCorrectLoser1Test(){
+    public void getCorrectLoser1Test() {
         g.enterResult(2, 3);
         try {
             assertEquals(p1, g.getLoser());
@@ -91,7 +102,7 @@ public class GameTest {
     }
 
     @Test
-    public void getCorrectLoser2Test(){
+    public void getCorrectLoser2Test() {
         g.enterResult(3, 2);
         try {
             assertEquals(p2, g.getLoser());
@@ -101,7 +112,7 @@ public class GameTest {
     }
 
     @Test
-    public void getCorrectLosersWonGames1Test(){
+    public void getCorrectLosersWonGames1Test() {
         g.enterResult(2, 3);
         try {
             assertEquals(2, g.getLosersWonGames());
@@ -111,7 +122,7 @@ public class GameTest {
     }
 
     @Test
-    public void getCorrectLosersWonGames2Test(){
+    public void getCorrectLosersWonGames2Test() {
         g.enterResult(3, 2);
         try {
             assertEquals(2, g.getLosersWonGames());
@@ -121,7 +132,7 @@ public class GameTest {
     }
 
     @Test
-    public void canNotGetWinnerIfUnfinishedTest(){
+    public void canNotGetWinnerIfUnfinishedTest() {
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("this game is not played yet");
 
@@ -129,7 +140,7 @@ public class GameTest {
     }
 
     @Test
-    public void canNotGetLoserIfUnfinishedTest(){
+    public void canNotGetLoserIfUnfinishedTest() {
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("this game is not played yet");
 
@@ -137,7 +148,7 @@ public class GameTest {
     }
 
     @Test
-    public void canNotGetLosersWonGamesIfUnfinishedTest(){
+    public void canNotGetLosersWonGamesIfUnfinishedTest() {
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("this game is not played yet");
 

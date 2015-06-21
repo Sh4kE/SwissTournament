@@ -7,12 +7,14 @@ import java.security.InvalidParameterException;
  */
 public class Game {
 
-
     private Player p1, p2;
     private int won_p1, won_p2;
     private boolean finished;
 
     public Game(Player p1, Player p2) {
+        if (p1 == null || p2 == null) {
+            throw new IllegalArgumentException("player can't be null");
+        }
         this.p1 = p1;
         this.p2 = p2;
         this.finished = false;

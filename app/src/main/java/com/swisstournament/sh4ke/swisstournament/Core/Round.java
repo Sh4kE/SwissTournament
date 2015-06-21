@@ -3,6 +3,7 @@ package com.swisstournament.sh4ke.swisstournament.Core;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
@@ -27,6 +28,9 @@ public class Round {
     }
 
     private void init(List<Player> players) {
+        if (players.isEmpty()) {
+            throw new IllegalStateException("Cannot create new round without players!");
+        }
         this.players = players;
         this.r = new Random();
         this.games = createGames();
@@ -38,7 +42,7 @@ public class Round {
 
         while (!playerQueue.isEmpty()) {
             Player p = playerQueue.remove(0);
-            Game g = createNewGame(p, playerQueue);
+            Game g = createGame(p, playerQueue);
 
             // remove the opponent from the queue as well
             playerQueue.remove(g.getP2());
@@ -53,11 +57,15 @@ public class Round {
      * @param p the player
      * @return a new Game with a random player, which p1 has not yet played against.
      */
-    private Game createNewGame(Player p, List<Player> playerQueue) {
+    private Game createGame(Player p, List<Player> playerQueue) {
         List<Player> possiblePlayers = new ArrayList(playerQueue);
 
         possiblePlayers.removeAll(getAllFormerOpponents(p));
         Player opponent = chooseRandomPlayer(possiblePlayers);
+        if (opponent == null) {
+            possiblePlayers.add(p); // only for debugging
+            throw new IllegalStateException("Cannot create new round with players: " + possiblePlayers);
+        }
         return new Game(p, opponent);
     }
 
@@ -75,7 +83,7 @@ public class Round {
         return opponents;
     }
 
-    private Player getOpponent(Player p) throws Exception {
+    public Player getOpponent(Player p) throws NoSuchElementException {
         Player opponent;
 
         for (Game game : games) {
@@ -86,11 +94,14 @@ public class Round {
                 return game.getP1();
             }
         }
-        throw new Exception(String.format("Player %s not found", p.getName()));
+        throw new NoSuchElementException(String.format("Player %s not found", p.getName()));
     }
 
     private Player chooseRandomPlayer(List<Player> players) {
-        return players.get(r.nextInt(players.size()));
+        if (players.size() > 0) {
+            return players.get(r.nextInt(players.size()));
+        }
+        return null;
     }
 
     public void enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException {
@@ -105,13 +116,22 @@ public class Round {
         throw new InvalidParameterException(String.format("Could not find game with players: (%s, %s)", p1, p2));
     }
 
+    public boolean canStart() {
+        return players.size() >= 2;
+    }
+
+    public void start() {
+        if (canStart()) {
+            this.started = true;
+        } else {
+            throw new IllegalStateException("Cannot start round with less than 2 players!");
+        }
+    }
+
     public boolean isStarted() {
         return this.started;
     }
 
-    public void start() {
-        this.started = true;
-    }
 
     public boolean isFinished() {
         for (Game game : games) {
@@ -122,12 +142,22 @@ public class Round {
         return true;
     }
 
-    public Game getNextUnfinishedGame() throws Exception {
+    public Game getNextUnfinishedGame() {
         for (Game game : games) {
             if (!game.isFinished()) {
                 return game;
             }
         }
-        throw new Exception("All Games are Finished. Can't get next game.");
+        return null;
+    }
+
+    public List<Game> getAllUnfinishedGames() {
+        List<Game> unfinishedGames = new ArrayList();
+        for (Game game : games) {
+            if (!game.isFinished()) {
+                unfinishedGames.add(game);
+            }
+        }
+        return unfinishedGames;
     }
 }

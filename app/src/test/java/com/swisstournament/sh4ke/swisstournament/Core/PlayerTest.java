@@ -1,5 +1,6 @@
-package com.swisstournament.sh4ke.swisstournament;
+package com.swisstournament.sh4ke.swisstournament.Core;
 
+import com.swisstournament.sh4ke.swisstournament.BuildConfig;
 import com.swisstournament.sh4ke.swisstournament.Core.Game;
 import com.swisstournament.sh4ke.swisstournament.Core.Player;
 
@@ -24,7 +25,7 @@ public class PlayerTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         p1 = new Player("p1");
         p2 = new Player("p2");
         p3 = new Player("p1");

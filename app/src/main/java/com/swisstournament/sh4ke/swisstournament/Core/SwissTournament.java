@@ -81,7 +81,7 @@ public class SwissTournament {
     }
 
     public boolean enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException, IllegalStateException {
-        if(currentRound != null){
+        if (currentRound != null) {
             if (currentRound.isStarted()) {
                 currentRound.enterResult(p1, won_p1, p2, won_p2);
                 return true;
@@ -90,5 +90,21 @@ public class SwissTournament {
         throw new IllegalStateException("Round has not started yet. Can't enter resutlts.");
     }
 
+    public int getMinPossibleRounds() {
+        if (isStarted()) {
+            double i = 0;
+            for (double power = Math.pow(2.0, i); i < registeredPlayerCount(); i++) {
+                // do nothing here
+            }
+            return (int) i;
+        }
+        return 0;
+    }
 
+    public int getMaxPossibleRounds() {
+        if (isStarted()) {
+            return registeredPlayerCount() - 1;
+        }
+        return Integer.MAX_VALUE;
+    }
 }
