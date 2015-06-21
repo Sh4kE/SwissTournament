@@ -25,8 +25,6 @@ public class Game {
             throw new InvalidParameterException("results cannot be greater than 3!");
         if (won_p1 == won_p2)
             throw new InvalidParameterException("results cannot be equal to each other!");
-        if (won_p1 >= 3 && won_p2 >= 3)
-            throw new InvalidParameterException("both results cannot be 3 or greater!");
         this.won_p1 = won_p1;
         this.won_p2 = won_p2;
         this.finished = true;
@@ -36,25 +34,25 @@ public class Game {
         return finished;
     }
 
-    public Player getWinner() throws Exception {
-        if (!isFinished()) {
-            throw new Exception("this game is not played yet");
+    public Player getWinner() throws IllegalStateException {
+        if (isFinished()) {
+            return (won_p1 > won_p2) ? p1 : p2;
         }
-        return (won_p1 > won_p2) ? p1 : p2;
+        throw new IllegalStateException("this game is not played yet");
     }
 
-    public Player getLoser() throws Exception {
-        if (!isFinished()) {
-            throw new Exception("this game is not played yet");
+    public Player getLoser() throws IllegalStateException {
+        if (isFinished()) {
+            return (won_p1 < won_p2) ? p1 : p2;
         }
-        return (won_p1 < won_p2) ? p1 : p2;
+        throw new IllegalStateException("this game is not played yet");
     }
 
-    public int getLosersWonGames() throws Exception {
+    public int getLosersWonGames() throws IllegalStateException {
         if (isFinished()) {
             return (won_p1 < won_p2) ? won_p1 : won_p2;
         }
-        throw new Exception("this game is not played yet");
+        throw new IllegalStateException("this game is not played yet");
     }
 
     public Player getP1() {

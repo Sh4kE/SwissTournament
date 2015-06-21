@@ -21,6 +21,14 @@ public class SwissTournament {
         started = false;
     }
 
+    public boolean isStarted() {
+        return started;
+    }
+
+    public Round getCurrentRound() {
+        return currentRound;
+    }
+
     public void addPlayer(Player p) {
         if (this.isStarted()) {
             throw new IllegalStateException("Tournament is already started. Can't add Players any more.");
@@ -35,10 +43,7 @@ public class SwissTournament {
     }
 
     public boolean canStartTournament() {
-        if (!this.isStarted()) {
-            return players.size() >= 2;
-        }
-        return false;
+        return players.size() >= 2;
     }
 
     public void startTournament() {
@@ -62,28 +67,28 @@ public class SwissTournament {
 
     /**
      * Starts the next round with all currently registered players.
+     *
+     * @return returns the last finished round
      */
-    public void startNextRound() throws Exception {
-        if (!canStartNextRound()) {
-            throw new Exception("Round not Finished");
+    public Round startNextRound() throws IllegalStateException {
+        if (canStartNextRound()) {
+            Round oldRound = currentRound;
+            currentRound = new Round(players);
+            currentRound.start();
+            return oldRound;
         }
-        currentRound = new Round(players);
-        currentRound.start();
+        throw new IllegalStateException("Round not Finished");
     }
 
-    public boolean enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException {
-        if (currentRound.isStarted()) {
-            currentRound.enterResult(p1, won_p1, p2, won_p2);
-            return true;
+    public boolean enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException, IllegalStateException {
+        if(currentRound != null){
+            if (currentRound.isStarted()) {
+                currentRound.enterResult(p1, won_p1, p2, won_p2);
+                return true;
+            }
         }
-        return false;
+        throw new IllegalStateException("Round has not started yet. Can't enter resutlts.");
     }
 
-    public Round getCurrentRound() {
-        return currentRound;
-    }
 
-    public boolean isStarted() {
-        return started;
-    }
 }

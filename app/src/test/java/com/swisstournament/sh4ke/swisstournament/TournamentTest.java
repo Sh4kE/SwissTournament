@@ -18,7 +18,6 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -26,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(RobolectricGradleTestRunner.class)
 public class TournamentTest {
     private SwissTournament t;
-    List<Player> players;
+    private List<Player> players;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -35,11 +34,39 @@ public class TournamentTest {
     public void setup() throws Exception {
         t = new SwissTournament();
         assertNotNull("Tournament could not be created", t);
-        players = new ArrayList<Player>();
+        players = new ArrayList();
         for (int i = 0; i < 16; i++) {
             players.add(new Player("p" + (i + 1)));
         }
         assertTrue(players.size() == 16);
+    }
+
+    private void startTournamentWithPlayers(int number_of_players){
+        for(int i = 0; i < number_of_players; i++){
+            t.addPlayer(players.get(i));
+        }
+        assertTrue(t.canStartTournament());
+        t.startTournament();
+        assertTrue(t.isStarted());
+
+        assertTrue(t.canStartNextRound());
+    }
+
+    private void startRoundWithPlayers(int number_of_players){
+        for(int i = 0; i < number_of_players; i++){
+            t.addPlayer(players.get(i));
+        }
+        assertTrue(t.canStartTournament());
+        t.startTournament();
+        assertTrue(t.isStarted());
+
+        assertTrue(t.canStartNextRound());
+        try {
+            t.startNextRound();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertFalse(t.canStartNextRound());
     }
 
     @Test
@@ -54,9 +81,32 @@ public class TournamentTest {
     }
 
     @Test
+    public void canNotAddPlayersAfterTournamentStartTest(){
+        startRoundWithPlayers(2);
+
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage("Tournament is already started. Can't add Players any more.");
+        t.addPlayer(players.get(2));
+    }
+
+    @Test
     public void canNotStartTournamentWithLessThanTwoPlayersTest() throws Exception {
         assertFalse(t.canStartTournament());
         t.addPlayer(players.get(0));
+        assertFalse(t.canStartTournament());
+        assertFalse(t.canStartNextRound());
+    }
+
+    @Test
+    public void canNotCallStartTournamentWithLessThanTwoPlayersTest() throws Exception {
+        assertFalse(t.canStartTournament());
+        t.addPlayer(players.get(0));
+
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage("Can't start tournament yet.");
+
+        t.startTournament();
+
         assertFalse(t.canStartTournament());
         assertFalse(t.canStartNextRound());
     }
@@ -89,7 +139,7 @@ public class TournamentTest {
         startRoundWithPlayers(4);
 
         while(! t.getCurrentRound().isFinished()){
-            Game g = t.getCurrentRound().getNextGame();
+            Game g = t.getCurrentRound().getNextUnfinishedGame();
             Player p1 = g.getP1();
             Player p2 = g.getP2();
             t.enterResult(p1, 3, p2, 2);
@@ -98,27 +148,34 @@ public class TournamentTest {
         assertTrue(t.canStartNextRound());
     }
 
-    @Test(expected= InvalidParameterException.class)
-    public void canNotEnterNegativeResults(){
+    @Test
+    public void canNotCallStartNextRoundWhenResultsAreMissingTest() throws Exception {
         startRoundWithPlayers(2);
-        t.enterResult(players.get(0), -1, players.get(1), 2);
-        //assertFalse(t.canStartNextRound());
+
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage("Round not Finished");
+
+        t.startNextRound();
     }
 
-    private void startRoundWithPlayers(int number_of_players){
-        for(int i = 0; i < number_of_players; i++){
-            t.addPlayer(players.get(i));
-        }
-        assertTrue(t.canStartTournament());
-        t.startTournament();
-        assertTrue(t.isStarted());
+    @Test
+    public void canNotEnterResultsWhenRoundIsNotStartedTest() throws Exception {
+        startTournamentWithPlayers(2);
 
-        assertTrue(t.canStartNextRound());
-        try {
-            t.startNextRound();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage("Round has not started yet. Can't enter resutlts.");
+
+        t.enterResult(players.get(0), 3, players.get(1), 2);
+    }
+
+    @Test
+    public void canNotEnterNegativeResultsTest(){
+        startRoundWithPlayers(2);
+
+        thrown.expect(InvalidParameterException.class);
+        thrown.expectMessage("results cannot be negative!");
+
+        t.enterResult(players.get(0), -1, players.get(1), 2);
         assertFalse(t.canStartNextRound());
     }
 }

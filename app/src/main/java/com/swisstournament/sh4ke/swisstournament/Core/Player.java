@@ -25,14 +25,7 @@ public class Player {
     }
 
     @Override
-    public int hashCode() {
-        return getName().hashCode();
-    }
-
-    @Override
     public String toString() {
-        return "Player{" +
-                "name='" + name + '\'' +
-                '}';
+        return String.format("Player '%s'", getName());
     }
 }

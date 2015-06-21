@@ -2,7 +2,6 @@ package com.swisstournament.sh4ke.swisstournament.Core;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -18,7 +17,7 @@ public class Round {
     private Random r;
 
     public Round(List<Player> players) {
-        this.finishedRounds = new ArrayList<Round>();
+        this.finishedRounds = new ArrayList();
         init(players);
     }
 
@@ -34,8 +33,8 @@ public class Round {
     }
 
     private List<Game> createGames() {
-        List<Game> games = new ArrayList<Game>();
-        List<Player> playerQueue = new ArrayList<Player>(players);
+        List<Game> games = new ArrayList();
+        List<Player> playerQueue = new ArrayList(players);
 
         while (!playerQueue.isEmpty()) {
             Player p = playerQueue.remove(0);
@@ -55,19 +54,15 @@ public class Round {
      * @return a new Game with a random player, which p1 has not yet played against.
      */
     private Game createNewGame(Player p, List<Player> playerQueue) {
-        Game game;
-
-        List<Player> possiblePlayers = new ArrayList<Player>(playerQueue);
+        List<Player> possiblePlayers = new ArrayList(playerQueue);
 
         possiblePlayers.removeAll(getAllFormerOpponents(p));
         Player opponent = chooseRandomPlayer(possiblePlayers);
-        game = new Game(p, opponent);
-
-        return game;
+        return new Game(p, opponent);
     }
 
     private List<Player> getAllFormerOpponents(Player p) {
-        List<Player> opponents = new ArrayList<Player>();
+        List<Player> opponents = new ArrayList();
 
         for (Round r : finishedRounds) {
             try {
@@ -110,15 +105,6 @@ public class Round {
         throw new InvalidParameterException(String.format("Could not find game with players: (%s, %s)", p1, p2));
     }
 
-    /*private Game getGame(Player p1, Player p2) throws Exception {
-        for (Game game : games) {
-            if ((game.getP1().equals(p1) && game.getP2().equals(p2)) || (game.getP1().equals(p2) && game.getP2().equals(p1))) {
-                return game;
-            }
-        }
-        throw new Exception(String.format("Could not find game with players: (%s, %s)", p1, p2));
-    }*/
-
     public boolean isStarted() {
         return this.started;
     }
@@ -136,7 +122,7 @@ public class Round {
         return true;
     }
 
-    public Game getNextGame() throws Exception {
+    public Game getNextUnfinishedGame() throws Exception {
         for (Game game : games) {
             if (!game.isFinished()) {
                 return game;
