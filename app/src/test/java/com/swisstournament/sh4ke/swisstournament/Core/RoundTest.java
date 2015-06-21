@@ -17,6 +17,7 @@ import org.robolectric.annotation.Config;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -133,6 +134,47 @@ public class RoundTest {
         thrown.expect(IllegalStateException.class);
         r = new Round(players, oldRounds);
         assertEquals(null, r.getNextUnfinishedGame());
+    }
+
+    @Test
+    public void enterResultWithTwoPlayersTest() {
+        createSimpleRoundWithPlayers(2);
+        Game g = r.getNextUnfinishedGame();
+        r.enterResult(players.get(0), 3, players.get(1), 2);
+        assertTrue(r.isFinished());
+        assertEquals(null, r.getNextUnfinishedGame());
+    }
+
+    @Test
+    public void canNotEnterResultWithoutRealPlayersTest() {
+        createSimpleRoundWithPlayers(2);
+        Game g = r.getNextUnfinishedGame();
+
+        thrown.expect(InvalidParameterException.class);
+        r.enterResult(players.get(0), 3, new Player("p3"), 2);
+
+        thrown.expect(InvalidParameterException.class);
+        r.enterResult(new Player("p3"), 3, players.get(0), 2);
+
+        assertFalse(r.isFinished());
+        assertEquals(g, r.getNextUnfinishedGame());
+    }
+
+    @Test
+    public void getOpponentTest() {
+        createSimpleRoundWithPlayers(2);
+        assertEquals(players.get(1), r.getOpponent(players.get(0)));
+        assertEquals(players.get(0), r.getOpponent(players.get(1)));
+    }
+
+    @Test
+    public void canNotGetOpponentTest() {
+        createSimpleRoundWithPlayers(2);
+
+        thrown.expect(NoSuchElementException.class);
+        thrown.expectMessage("Player p3 not found");
+
+        r.getOpponent(new Player("p3"));
     }
 
 }

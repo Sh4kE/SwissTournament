@@ -69,16 +69,12 @@ public class Round {
         return new Game(p, opponent);
     }
 
-    private List<Player> getAllFormerOpponents(Player p) {
+    private List<Player> getAllFormerOpponents(Player p) throws NoSuchElementException {
         List<Player> opponents = new ArrayList();
 
         for (Round r : finishedRounds) {
-            try {
-                Player opponent = r.getOpponent(p);
-                opponents.add(opponent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Player opponent = r.getOpponent(p);
+            opponents.add(opponent);
         }
         return opponents;
     }
@@ -107,13 +103,17 @@ public class Round {
     public void enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException {
         for (int i = 0; i < games.size(); i++) {
             Game game = games.get(i);
-            if ((game.getP1().equals(p1) && game.getP2().equals(p2)) || (game.getP1().equals(p2) && game.getP2().equals(p1))) {
+            if (gameHasPlayers(game, p1, p2)) {
                 game.enterResult(won_p1, won_p2);
                 games.set(i, game);
                 return;
             }
         }
         throw new InvalidParameterException(String.format("Could not find game with players: (%s, %s)", p1, p2));
+    }
+
+    public boolean gameHasPlayers(Game game, Player p1, Player p2) {
+        return (game.getP1().equals(p1) && game.getP2().equals(p2)) || (game.getP1().equals(p2) && game.getP2().equals(p1));
     }
 
     public boolean canStart() {

@@ -41,13 +41,14 @@ public class TournamentTest {
         t = new SwissTournament();
         assertNotNull("Tournament could not be created", t);
         players = new ArrayList();
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 32; i++) {
             players.add(new Player("p" + (i + 1)));
         }
-        assertTrue(players.size() == 16);
+        assertTrue(players.size() == 32);
     }
 
     private void startTournamentWithPlayers(int number_of_players){
+        t = new SwissTournament();
         for(int i = 0; i < number_of_players; i++){
             t.addPlayer(players.get(i));
         }
@@ -59,6 +60,7 @@ public class TournamentTest {
     }
 
     private void startRoundWithPlayers(int number_of_players){
+        t = new SwissTournament();
         for(int i = 0; i < number_of_players; i++){
             t.addPlayer(players.get(i));
         }
@@ -184,4 +186,52 @@ public class TournamentTest {
         t.enterResult(players.get(0), -1, players.get(1), 2);
         assertFalse(t.canStartNextRound());
     }
+
+//    @Test
+//    public void getMinPossibleRoundsWithPowerZeroTest(){
+//        for(int i = 0; i <= 1; i++){
+//            startRoundWithPlayers(i);
+//            assertEquals(0, t.getMinPossibleRounds());
+//        }
+//    }
+//
+//    @Test
+//    public void getMinPossibleRoundsWithPowerOneTest(){
+//        for(int i = 2; i <= 2; i++){
+//            startRoundWithPlayers(i);
+//            assertEquals(1, t.getMinPossibleRounds());
+//        }
+//    }
+//
+//    @Test
+//    public void getMinPossibleRoundsWithPowerTwoTest(){
+//        for(int i = 3; i <= 4; i++){
+//            startRoundWithPlayers(i);
+//            assertEquals(0, t.getMinPossibleRounds());
+//        }
+//    }
+//
+//    @Test
+//    public void getMinPossibleRoundsWithPowerThreeTest(){
+//        for(int i = 5; i <= 8; i++){
+//            startRoundWithPlayers(i);
+//            assertEquals(0, t.getMinPossibleRounds());
+//        }
+//    }
+//
+//    @Test
+//    public void getMinPossibleRoundsWithPowerFourTest(){
+//        for(int i = 9; i <= 16; i++){
+//            startRoundWithPlayers(i);
+//            assertEquals(0, t.getMinPossibleRounds());
+//        }
+//    }
+//
+//    @Test
+//    public void getMinPossibleRoundsWithPowerFiveTest(){
+//        for(int i = 17; i <= 32; i++){
+//            startRoundWithPlayers(i);
+//            assertEquals(0, t.getMinPossibleRounds());
+//        }
+//    }
 }

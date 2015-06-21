@@ -93,7 +93,7 @@ public class SwissTournament {
     public int getMinPossibleRounds() {
         if (isStarted()) {
             double i = 0;
-            for (double power = Math.pow(2.0, i); i < registeredPlayerCount(); i++) {
+            for (double power = Math.pow(2.0, i); power < registeredPlayerCount(); i++) {
                 // do nothing here
             }
             return (int) i;
