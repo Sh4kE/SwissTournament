@@ -66,7 +66,7 @@ public class TournamentTest {
         try {
             t.startNextRound();
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(null,e);
         }
         assertFalse(t.canStartNextRound());
     }
