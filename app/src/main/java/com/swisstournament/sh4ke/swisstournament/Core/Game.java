@@ -1,5 +1,7 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
+import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
+
 import java.security.InvalidParameterException;
 
 /**

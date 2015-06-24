@@ -1,10 +1,8 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
 import com.swisstournament.sh4ke.swisstournament.BuildConfig;
-import com.swisstournament.sh4ke.swisstournament.Core.Game;
-import com.swisstournament.sh4ke.swisstournament.Core.Player;
-import com.swisstournament.sh4ke.swisstournament.Core.Round;
-import com.swisstournament.sh4ke.swisstournament.Core.SwissTournament;
+import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;
+import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,7 +40,7 @@ public class RoundTest {
     private void createSimpleRoundWithPlayers(int n) {
         players = new ArrayList();
         for (int i = 0; i < n; i++) {
-            players.add(new Player("p" + (i + 1)));
+            players.add(new HumanPlayer("p" + (i + 1)));
         }
         assertTrue(players.size() == n);
         r = new Round(players);
@@ -64,7 +62,7 @@ public class RoundTest {
         r = new Round(players);
         assertFalse(r.canStart());
 
-        players.add(new Player("p0"));
+        players.add(new HumanPlayer("p0"));
 
         thrown.expect(IllegalStateException.class);
         r = new Round(players);
@@ -81,15 +79,6 @@ public class RoundTest {
         players = new ArrayList();
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("Cannot create new round without players!");
-        r = new Round(players);
-        assertFalse(r.canStart());
-    }
-
-    @Test
-    public void canNotGenerateRoundWithOnePlayer() {
-        players = new ArrayList();
-        players.add(new Player("p0"));
-        thrown.expect(IllegalStateException.class);
         r = new Round(players);
         assertFalse(r.canStart());
     }
@@ -125,8 +114,8 @@ public class RoundTest {
     @Test
     public void canNotPlayTwoRoundsWithTwoPlayers() {
         createSimpleRoundWithPlayers(2);
-        Game g = r.getNextUnfinishedGame();
-        g.enterResult(3, 2);
+        assertEquals(1, r.getAllUnfinishedGames().size());
+        r.getNextUnfinishedGame().enterResult(3, 2);
 
         List<Round> oldRounds = new ArrayList();
         oldRounds.add(r);
@@ -151,10 +140,10 @@ public class RoundTest {
         Game g = r.getNextUnfinishedGame();
 
         thrown.expect(InvalidParameterException.class);
-        r.enterResult(players.get(0), 3, new Player("p3"), 2);
+        r.enterResult(players.get(0), 3, new HumanPlayer("p3"), 2);
 
         thrown.expect(InvalidParameterException.class);
-        r.enterResult(new Player("p3"), 3, players.get(0), 2);
+        r.enterResult(new HumanPlayer("p3"), 3, players.get(0), 2);
 
         assertFalse(r.isFinished());
         assertEquals(g, r.getNextUnfinishedGame());
@@ -174,7 +163,7 @@ public class RoundTest {
         thrown.expect(NoSuchElementException.class);
         thrown.expectMessage("Player p3 not found");
 
-        r.getOpponent(new Player("p3"));
+        r.getOpponent(new HumanPlayer("p3"));
     }
 
 }

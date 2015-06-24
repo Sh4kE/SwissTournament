@@ -1,8 +1,7 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
 import com.swisstournament.sh4ke.swisstournament.BuildConfig;
-import com.swisstournament.sh4ke.swisstournament.Core.Game;
-import com.swisstournament.sh4ke.swisstournament.Core.Player;
+import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,16 +18,16 @@ import static junit.framework.Assert.assertTrue;
 @Config(constants = BuildConfig.class, sdk = 21)
 @RunWith(RobolectricGradleTestRunner.class)
 public class PlayerTest {
-    private Player p1, p2, p3;
+    private HumanPlayer p1, p2, p3;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup() {
-        p1 = new Player("p1");
-        p2 = new Player("p2");
-        p3 = new Player("p1");
+        p1 = new HumanPlayer("p1");
+        p2 = new HumanPlayer("p2");
+        p3 = new HumanPlayer("p1");
     }
 
     @Test

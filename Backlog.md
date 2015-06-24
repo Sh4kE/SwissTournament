@@ -1,5 +1,6 @@
 # TODOs
 
+* Add only one byePlayer if amount of players is uneven.
 * Give Players a strength (LPZ?) field
 * Only Choose Random Players for a Game if they have the same amount of wins
 * min/recommended/max rounds

@@ -1,9 +1,7 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
 import com.swisstournament.sh4ke.swisstournament.BuildConfig;
-import com.swisstournament.sh4ke.swisstournament.Core.Game;
-import com.swisstournament.sh4ke.swisstournament.Core.Player;
-import com.swisstournament.sh4ke.swisstournament.Core.Round;
+import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,8 +12,6 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -24,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 @Config(constants = BuildConfig.class, sdk = 21)
 @RunWith(RobolectricGradleTestRunner.class)
 public class GameTest {
-    private Player p1, p2;
+    private HumanPlayer p1, p2;
     private Game g;
 
     @Rule
@@ -32,8 +28,8 @@ public class GameTest {
 
     @Before
     public void setup() {
-        p1 = new Player("p1");
-        p2 = new Player("p2");
+        p1 = new HumanPlayer("p1");
+        p2 = new HumanPlayer("p2");
         g = new Game(p1, p2);
     }
 

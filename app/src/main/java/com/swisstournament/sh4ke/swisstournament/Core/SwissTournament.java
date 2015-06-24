@@ -1,5 +1,9 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
+import com.swisstournament.sh4ke.swisstournament.Core.Player.ByePlayer;
+import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;
+import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +52,9 @@ public class SwissTournament {
 
     public void startTournament() {
         if (canStartTournament()) {
+            if (players.size() % 2 == 1) {
+                addPlayer(ByePlayer.getInstance());
+            }
             started = true;
         } else {
             throw new IllegalStateException("Can't start tournament yet.");
@@ -87,16 +94,17 @@ public class SwissTournament {
                 return true;
             }
         }
-        throw new IllegalStateException("Round has not started yet. Can't enter resutlts.");
+        throw new IllegalStateException("Round has not started yet. Can't enter results.");
     }
 
     public int getMinPossibleRounds() {
         if (isStarted()) {
             double i = 0;
-            for (double power = Math.pow(2.0, i); power < registeredPlayerCount(); i++) {
-                // do nothing here
+            double power = 0;
+            for (; power < registeredPlayerCount(); i++) {
+                power = Math.pow(2.0, i);
             }
-            return (int) i;
+            return (int) i-1;
         }
         return 0;
     }

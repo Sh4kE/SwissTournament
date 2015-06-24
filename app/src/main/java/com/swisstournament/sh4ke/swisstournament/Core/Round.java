@@ -1,5 +1,10 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
+import android.util.Log;
+
+import com.swisstournament.sh4ke.swisstournament.Core.Player.ByePlayer;
+import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +68,7 @@ public class Round {
         possiblePlayers.removeAll(getAllFormerOpponents(p));
         Player opponent = chooseRandomPlayer(possiblePlayers);
         if (opponent == null) {
-            possiblePlayers.add(p); // only for debugging
-            throw new IllegalStateException("Cannot create new round with players: " + possiblePlayers);
+            throw new IllegalStateException("Can't find opponent for player " + p);
         }
         return new Game(p, opponent);
     }
@@ -74,6 +78,7 @@ public class Round {
 
         for (Round r : finishedRounds) {
             Player opponent = r.getOpponent(p);
+            players.add(opponent);
             opponents.add(opponent);
         }
         return opponents;
