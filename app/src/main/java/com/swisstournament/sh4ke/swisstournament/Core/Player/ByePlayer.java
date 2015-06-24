@@ -6,8 +6,8 @@ package com.swisstournament.sh4ke.swisstournament.Core.Player;
  * Singleton class for a bye player.
  */
 public class ByePlayer extends Player {
-    private String name;
-    private static Player bye = new ByePlayer();
+    private final String name;
+    private static final Player bye = new ByePlayer();
 
     public static Player getInstance(){
         return bye;

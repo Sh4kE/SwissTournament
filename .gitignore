@@ -5,6 +5,9 @@
 .DS_Store
 /captures
 
+# reports
+reports/
+
 # Built application files
 *.apk
 *.ap_

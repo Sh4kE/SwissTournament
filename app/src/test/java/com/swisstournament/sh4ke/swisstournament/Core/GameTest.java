@@ -14,8 +14,6 @@ import org.robolectric.annotation.Config;
 import java.security.InvalidParameterException;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @Config(constants = BuildConfig.class, sdk = 21)
 @RunWith(RobolectricGradleTestRunner.class)
@@ -24,7 +22,7 @@ public class GameTest {
     private Game g;
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public final ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup() {

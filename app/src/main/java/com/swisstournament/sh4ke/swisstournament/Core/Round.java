@@ -1,8 +1,5 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
-import android.util.Log;
-
-import com.swisstournament.sh4ke.swisstournament.Core.Player.ByePlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
 
 import java.security.InvalidParameterException;
@@ -85,8 +82,6 @@ public class Round {
     }
 
     public Player getOpponent(Player p) throws NoSuchElementException {
-        Player opponent;
-
         for (Game game : games) {
             if (game.getP1().equals(p)) {
                 return game.getP2();

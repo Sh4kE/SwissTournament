@@ -1,7 +1,6 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
 import com.swisstournament.sh4ke.swisstournament.Core.Player.ByePlayer;
-import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
 
 import java.security.InvalidParameterException;
@@ -20,8 +19,8 @@ public class SwissTournament {
 
 
     public SwissTournament() {
-        players = new ArrayList<Player>();
-        finishedRounds = new ArrayList<Round>();
+        players = new ArrayList<>();
+        finishedRounds = new ArrayList<>();
         started = false;
     }
 
@@ -63,11 +62,7 @@ public class SwissTournament {
 
     public boolean canStartNextRound() {
         if (this.isStarted()) {
-            if (currentRound != null) {
-                return currentRound.isFinished();
-            } else {
-                return true;
-            }
+            return currentRound == null || currentRound.isFinished();
         }
         return false;
     }
@@ -87,11 +82,10 @@ public class SwissTournament {
         throw new IllegalStateException("Round not Finished");
     }
 
-    public boolean enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException, IllegalStateException {
+    public void enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException, IllegalStateException {
         if (currentRound != null) {
             if (currentRound.isStarted()) {
                 currentRound.enterResult(p1, won_p1, p2, won_p2);
-                return true;
             }
         }
         throw new IllegalStateException("Round has not started yet. Can't enter results.");

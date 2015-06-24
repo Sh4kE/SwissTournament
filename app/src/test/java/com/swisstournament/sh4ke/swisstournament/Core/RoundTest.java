@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 @Config(constants = BuildConfig.class, sdk = 21)
@@ -30,7 +30,7 @@ public class RoundTest {
     private Round r;
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public final ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup() {
@@ -131,7 +131,7 @@ public class RoundTest {
         Game g = r.getNextUnfinishedGame();
         r.enterResult(players.get(0), 3, players.get(1), 2);
         assertTrue(r.isFinished());
-        assertEquals(null, r.getNextUnfinishedGame());
+        assertNotEquals(g, r.getNextUnfinishedGame());
     }
 
     @Test
