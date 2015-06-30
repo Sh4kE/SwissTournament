@@ -18,6 +18,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -63,11 +64,7 @@ public class TournamentTest {
         assertTrue(t.isStarted());
 
         assertTrue(t.canStartNextRound());
-        try {
-            t.startNextRound();
-        } catch (Exception e) {
-            assertEquals(null,e);
-        }
+        t.startNextRound();
         assertFalse(t.canStartNextRound());
     }
 
@@ -88,6 +85,7 @@ public class TournamentTest {
 
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("Tournament is already started. Can't add Players any more.");
+
         t.addPlayer(players.get(2));
     }
 
@@ -182,47 +180,85 @@ public class TournamentTest {
     }
 
     @Test
+    public void canStartSecondRoundWithThreePlayersTest() {
+        startRoundWithPlayers(3);
+
+        Round currentRound = t.getCurrentRound();
+        Game g1 = currentRound.getNextUnfinishedGame();
+        g1.enterResult(3, 2);
+        assertEquals(null, currentRound.getNextUnfinishedGame());
+        assertTrue(t.canStartNextRound());
+        t.startNextRound();
+        Round nextRound = t.getCurrentRound();
+        assertNotEquals(currentRound, nextRound);
+
+        Game g2 = nextRound.getNextUnfinishedGame();
+        assertNotEquals(g1, g2);
+
+        g2.enterResult(3, 2);
+        assertEquals(null, currentRound.getNextUnfinishedGame());
+        assertTrue(t.canStartNextRound());
+    }
+
+    @Test
+    public void onlyPlayersWithAlmostSameWinsPlayAgainstEachOtherTest() {
+        startRoundWithPlayers(4);
+        Player p1, p2, p3, p4;
+
+        Game g1 = t.getCurrentRound().getNextUnfinishedGame();
+        p1 = g1.getP1();
+        p2 = g1.getP2();
+        g1.enterResult(3, 2);
+
+        Game g2 = t.getCurrentRound().getNextUnfinishedGame();
+        p3 = g2.getP1();
+        p4 = g2.getP2();
+        g2.enterResult(3, 2);
+
+        assertEquals(null, t.getCurrentRound().getNextUnfinishedGame());
+        assertTrue(t.canStartNextRound());
+        t.startNextRound();
+
+        Game g3 = t.getCurrentRound().getNextUnfinishedGame();
+        boolean correctPlayers = (g3.getP1().equals(p1) && g3.getP2().equals(p3)) || (g3.getP1().equals(p2) && g3.getP2().equals(p4));
+        assertTrue(correctPlayers);
+        g3.enterResult(3, 2);
+
+        Game g4 = t.getCurrentRound().getNextUnfinishedGame();
+        correctPlayers = (g4.getP1().equals(p1) && g4.getP2().equals(p3)) || (g4.getP1().equals(p2) && g4.getP2().equals(p4));
+        assertTrue(correctPlayers);
+        g4.enterResult(3, 2);
+
+        assertTrue(t.canStartNextRound());
+    }
+
+    @Test
+    public void getcurrentRankingWithNoRoundFinishedFailsTest() {
+        startRoundWithPlayers(2);
+
+        Ranking r = t.getCurrentRanking();
+        assertEquals(null, r);
+    }
+
+    @Test
     public void getMinPossibleRoundsWithPowerZeroTest() {
         assertEquals(0, t.getMinPossibleRounds());
     }
 
     @Test
-    public void getMinPossibleRoundsWithPowerOneTest() {
-        for (int i = 2; i <= 2; i++) {
+    public void getMinPossibleRoundsTest() {
+        for (int i = 2; i <= 32; i++) {
             startRoundWithPlayers(i);
-            assertEquals(1, t.getMinPossibleRounds());
+            int subscript = findMaxPossibleSubscript(i);
+            assertEquals(subscript, t.getMinPossibleRounds());
         }
     }
 
-    @Test
-    public void getMinPossibleRoundsWithPowerTwoTest() {
-        for (int i = 3; i <= 4; i++) {
-            startRoundWithPlayers(i);
-            assertEquals(2, t.getMinPossibleRounds());
+    private int findMaxPossibleSubscript(int p) {
+        int i = 0;
+        while(Math.pow(2,i) < p){
+            i++;
         }
-    }
-
-    @Test
-    public void getMinPossibleRoundsWithPowerThreeTest() {
-        for (int i = 5; i <= 8; i++) {
-            startRoundWithPlayers(i);
-            assertEquals(3, t.getMinPossibleRounds());
-        }
-    }
-
-    @Test
-    public void getMinPossibleRoundsWithPowerFourTest() {
-        for (int i = 9; i <= 16; i++) {
-            startRoundWithPlayers(i);
-            assertEquals(4, t.getMinPossibleRounds());
-        }
-    }
-
-    @Test
-    public void getMinPossibleRoundsWithPowerFiveTest() {
-        for (int i = 17; i <= 32; i++) {
-            startRoundWithPlayers(i);
-            assertEquals(5, t.getMinPossibleRounds());
-        }
+        return i;
     }
 }

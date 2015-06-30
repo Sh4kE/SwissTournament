@@ -14,6 +14,7 @@ public class SwissTournament {
 
     private List<Player> players;
     private List<Round> finishedRounds;
+    private List<Ranking> rankings;
     private Round currentRound;
     private boolean started;
 
@@ -21,6 +22,7 @@ public class SwissTournament {
     public SwissTournament() {
         players = new ArrayList<>();
         finishedRounds = new ArrayList<>();
+        rankings = new ArrayList<>();
         started = false;
     }
 
@@ -72,14 +74,25 @@ public class SwissTournament {
      *
      * @return returns the last finished round
      */
-    public Round startNextRound() throws IllegalStateException {
+    public void startNextRound() throws IllegalStateException {
         if (canStartNextRound()) {
             Round oldRound = currentRound;
-            currentRound = new Round(players);
+
+            if(oldRound != null) {
+                finishedRounds.add(oldRound);
+                Ranking r = createRanking(oldRound);
+                rankings.add(r);
+            }
+
+            currentRound = new Round(players, finishedRounds);
             currentRound.start();
-            return oldRound;
+        }else{
+            throw new IllegalStateException("Round not Finished");
         }
-        throw new IllegalStateException("Round not Finished");
+    }
+
+    private Ranking createRanking(Round round) {
+        return new Ranking(round, finishedRounds);
     }
 
     public void enterResult(Player p1, int won_p1, Player p2, int won_p2) throws InvalidParameterException, IllegalStateException {
@@ -107,5 +120,12 @@ public class SwissTournament {
             return registeredPlayerCount() - 1;
         }
         return Integer.MAX_VALUE;
+    }
+
+    public Ranking getCurrentRanking() {
+        if (!rankings.isEmpty()){
+            return rankings.get(rankings.size()-1);
+        }
+        return null;
     }
 }

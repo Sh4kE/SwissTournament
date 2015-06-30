@@ -1,5 +1,6 @@
 package com.swisstournament.sh4ke.swisstournament.Core;
 
+import com.swisstournament.sh4ke.swisstournament.Core.Player.ByePlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
 
 import java.security.InvalidParameterException;
@@ -19,7 +20,14 @@ public class Game {
         }
         this.p1 = p1;
         this.p2 = p2;
-        this.finished = false;
+
+        if (p1 instanceof ByePlayer || p2 instanceof ByePlayer) {
+            won_p1 = (p1 instanceof ByePlayer) ? 0 : 3;
+            won_p2 = (p2 instanceof ByePlayer) ? 0 : 3;
+            this.finished = true;
+        } else {
+            this.finished = false;
+        }
     }
 
     public void enterResult(int won_p1, int won_p2) throws InvalidParameterException {
@@ -65,5 +73,27 @@ public class Game {
 
     public Player getP2() {
         return p2;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Game)) return false;
+
+        Game otherGame = (Game) o;
+
+        boolean samePlayers = (getP1().equals(otherGame.getP1()) || getP1().equals(otherGame.getP2())) && (getP2().equals(otherGame.getP1()) || getP2().equals(otherGame.getP2()));
+        return samePlayers;
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "p1=" + p1 +
+                ", p2=" + p2 +
+                ", finished=" + finished +
+                ", won_p1=" + won_p1 +
+                ", won_p2=" + won_p2 +
+                '}';
     }
 }

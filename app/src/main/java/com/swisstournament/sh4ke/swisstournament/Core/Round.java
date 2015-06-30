@@ -17,8 +17,6 @@ public class Round {
     private List<Game> games;
     private boolean started;
 
-    private Random r;
-
     public Round(List<Player> players) {
         this.finishedRounds = new ArrayList();
         init(players);
@@ -34,7 +32,6 @@ public class Round {
             throw new IllegalStateException("Cannot create new round without players!");
         }
         this.players = players;
-        this.r = new Random();
         this.games = createGames();
     }
 
@@ -63,7 +60,7 @@ public class Round {
         List<Player> possiblePlayers = new ArrayList(playerQueue);
 
         possiblePlayers.removeAll(getAllFormerOpponents(p));
-        Player opponent = chooseRandomPlayer(possiblePlayers);
+        Player opponent = choosePlayer(possiblePlayers);
         if (opponent == null) {
             throw new IllegalStateException("Can't find opponent for player " + p);
         }
@@ -93,9 +90,9 @@ public class Round {
         throw new NoSuchElementException(String.format("Player %s not found", p.getName()));
     }
 
-    private Player chooseRandomPlayer(List<Player> players) {
+    private Player choosePlayer(List<Player> players) {
         if (players.size() > 0) {
-            return players.get(r.nextInt(players.size()));
+            return players.get(0);
         }
         return null;
     }
