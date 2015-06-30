@@ -4,6 +4,8 @@ import com.swisstournament.sh4ke.swisstournament.BuildConfig;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,11 +27,10 @@ import static org.junit.Assert.assertTrue;
 @Config(constants = BuildConfig.class, sdk = 21)
 @RunWith(RobolectricGradleTestRunner.class)
 public class TournamentTest {
-    private SwissTournament t;
-    private List<HumanPlayer> players;
-
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
+    private SwissTournament t;
+    private List<HumanPlayer> players;
 
     @Before
     public void setup() {
@@ -205,7 +206,7 @@ public class TournamentTest {
     }
 
     @Test
-    public void onlyPlayersWithAlmostSameWinsPlayAgainstEachOtherTest() {
+    public void TwoPlayersWithOneWinPlayAgainstEachOtherTest() {
         startRoundWithPlayers(4);
         Player p1, p2, p3, p4;
 
@@ -237,6 +238,50 @@ public class TournamentTest {
     }
 
     @Test
+    public void ThreePlayersWithOneWinTest() {
+        startRoundWithPlayers(6);
+
+        Game[] games = new Game[3];
+
+        for (int i = 0; i < 3; i++) {
+            games[i] = playNextGame();
+        }
+
+        assertEquals(null, t.getCurrentRound().getNextUnfinishedGame());
+        assertTrue(t.canStartNextRound());
+        t.startNextRound();
+
+        Game g = t.getCurrentRound().getNextUnfinishedGame();
+        Player p1 = g.getP1();
+        Player p2 = g.getP2();
+        Assert.assertEquals(1, t.getCurrentRound().getPlayerWins(p1));
+        Assert.assertEquals(1, t.getCurrentRound().getPlayerWins(p2));
+
+        playNextGame();
+
+        g = t.getCurrentRound().getNextUnfinishedGame();
+        p1 = g.getP1();
+        p2 = g.getP2();
+        boolean oneHasOneWin = t.getCurrentRound().getPlayerWins(p1) == 1 || t.getCurrentRound().getPlayerWins(p2) == 1;
+        boolean oneHasZeroWins = t.getCurrentRound().getPlayerWins(p1) == 0 || t.getCurrentRound().getPlayerWins(p2) == 0;
+        Assert.assertTrue(oneHasOneWin);
+        Assert.assertTrue(oneHasZeroWins);
+
+        playNextGame();
+
+        g = t.getCurrentRound().getNextUnfinishedGame();
+        p1 = g.getP1();
+        p2 = g.getP2();
+        boolean bothHaveZeroWins = t.getCurrentRound().getPlayerWins(p1) == 0 && t.getCurrentRound().getPlayerWins(p2) == 0;
+        Assert.assertTrue(oneHasOneWin);
+        Assert.assertTrue(oneHasZeroWins);
+
+        playNextGame();
+
+        assertTrue(t.canStartNextRound());
+    }
+
+    @Test
     public void getcurrentRankingWithNoRoundFinishedFailsTest() {
         startRoundWithPlayers(2);
 
@@ -260,9 +305,15 @@ public class TournamentTest {
 
     private int findMaxPossibleSubscript(int p) {
         int i = 0;
-        while(Math.pow(2,i) < p){
+        while (Math.pow(2, i) < p) {
             i++;
         }
         return i;
+    }
+
+    private Game playNextGame() {
+        Game g = t.getCurrentRound().getNextUnfinishedGame();
+        g.enterResult(3, 2);
+        return g;
     }
 }
