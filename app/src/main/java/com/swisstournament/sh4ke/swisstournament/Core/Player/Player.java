@@ -12,7 +12,7 @@ public abstract class Player {
         if (this == o) return true;
         if (!(o instanceof Player)) return false;
 
-        Player otherPlayer = (HumanPlayer) o;
+        Player otherPlayer = (Player) o;
 
         return getName().equals(otherPlayer.getName());
     }

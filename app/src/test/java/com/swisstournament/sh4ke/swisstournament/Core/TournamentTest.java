@@ -130,7 +130,8 @@ public class TournamentTest {
     @Test
     public void canPlayOneRoundWithTwoPlayersTest() {
         startRoundWithPlayers(2);
-        t.enterResult(players.get(0), 3, players.get(1), 2);
+        Round r = t.getCurrentRound();
+        r.enterResult(players.get(0), 3, players.get(1), 2);
         assertTrue(t.canStartNextRound());
     }
 
@@ -142,7 +143,8 @@ public class TournamentTest {
             Game g = t.getCurrentRound().getNextUnfinishedGame();
             Player p1 = g.getP1();
             Player p2 = g.getP2();
-            t.enterResult(p1, 3, p2, 2);
+            Round r = t.getCurrentRound();
+            r.enterResult(p1, 3, p2, 2);
         }
 
         assertTrue(t.canStartNextRound());
@@ -163,9 +165,10 @@ public class TournamentTest {
         startTournamentWithPlayers(2);
 
         thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("Round has not started yet. Can't enter results.");
+        thrown.expectMessage("Round has not started yet!");
 
-        t.enterResult(players.get(0), 3, players.get(1), 2);
+        Round r = t.getCurrentRound();
+        r.enterResult(players.get(0), 3, players.get(1), 2);
     }
 
     @Test
@@ -175,7 +178,8 @@ public class TournamentTest {
         thrown.expect(InvalidParameterException.class);
         thrown.expectMessage("results cannot be negative!");
 
-        t.enterResult(players.get(0), -1, players.get(1), 2);
+        Round r = t.getCurrentRound();
+        r.enterResult(players.get(0), -1, players.get(1), 2);
         assertFalse(t.canStartNextRound());
     }
 
@@ -213,19 +217,19 @@ public class TournamentTest {
         Game g2 = t.getCurrentRound().getNextUnfinishedGame();
         p3 = g2.getP1();
         p4 = g2.getP2();
-        g2.enterResult(3, 2);
+        g2.enterResult(2, 3);
 
         assertEquals(null, t.getCurrentRound().getNextUnfinishedGame());
         assertTrue(t.canStartNextRound());
         t.startNextRound();
 
         Game g3 = t.getCurrentRound().getNextUnfinishedGame();
-        boolean correctPlayers = (g3.getP1().equals(p1) && g3.getP2().equals(p3)) || (g3.getP1().equals(p2) && g3.getP2().equals(p4));
+        boolean correctPlayers = (g3.getP1().equals(p1) && g3.getP2().equals(p4)) || (g3.getP1().equals(p2) && g3.getP2().equals(p3));
         assertTrue(correctPlayers);
         g3.enterResult(3, 2);
 
         Game g4 = t.getCurrentRound().getNextUnfinishedGame();
-        correctPlayers = (g4.getP1().equals(p1) && g4.getP2().equals(p3)) || (g4.getP1().equals(p2) && g4.getP2().equals(p4));
+        correctPlayers = (g4.getP1().equals(p1) && g4.getP2().equals(p4)) || (g4.getP1().equals(p2) && g4.getP2().equals(p3));
         assertTrue(correctPlayers);
         g4.enterResult(3, 2);
 
