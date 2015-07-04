@@ -274,8 +274,7 @@ public class TournamentTest {
         p1 = g.getP1();
         p2 = g.getP2();
         boolean bothHaveZeroWins = t.getCurrentRound().getPlayerWins(p1) == 0 && t.getCurrentRound().getPlayerWins(p2) == 0;
-        Assert.assertTrue(oneHasOneWin);
-        Assert.assertTrue(oneHasZeroWins);
+        Assert.assertTrue(bothHaveZeroWins);
 
         playNextGame();
 
