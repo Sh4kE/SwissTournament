@@ -13,6 +13,8 @@ import java.util.NoSuchElementException;
  * Created by sh4ke on 17.06.15.
  */
 public class Round {
+
+    private static final int WIN_SETS = 3;
     private List<Player> players;
     private List<Round> finishedRounds;
     private List<Game> games;
@@ -76,18 +78,6 @@ public class Round {
             opponents.add(opponent);
         }
         return opponents;
-    }
-
-    public Player getOpponent(Player p) throws NoSuchElementException {
-        for (Game game : games) {
-            if (game.getP1().equals(p)) {
-                return game.getP2();
-            }
-            if (game.getP2().equals(p)) {
-                return game.getP1();
-            }
-        }
-        throw new NoSuchElementException(String.format("Player %s not found", p.getName()));
     }
 
     private Player choosePlayerWithSameOrNearlySameWins(List<Player> players) {
@@ -193,6 +183,10 @@ public class Round {
         return finishedGames;
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
+
     public int getPlayerWins(Player p){
         int wins = 0;
 
@@ -211,6 +205,66 @@ public class Round {
         }
 
         return wins;
+    }
+
+    public int getWonSets(Player p){
+        int sets = 0;
+
+        // current round
+        Game g = getGameWithPlayer(p);
+        if (checkIfWinner(g, p)){
+            sets += WIN_SETS;
+        } else {
+            sets += g.getLosersWonSets();
+        }
+
+        // finished rounds
+        for(Round r : finishedRounds){
+            g = r.getGameWithPlayer(p);
+            if (checkIfWinner(g, p)){
+                sets += 3;
+            } else {
+                sets += g.getLosersWonSets();
+            }
+        }
+
+        return sets;
+    }
+
+    public int getWithdrawnSets(Player p){
+        int sets = 0;
+
+        // current round
+        Game g = getGameWithPlayer(p);
+        if (checkIfWinner(g, p)){
+            sets += WIN_SETS - g.getLosersWonSets();
+        } else {
+            sets += g.getLosersWonSets() - WIN_SETS;
+        }
+
+        // finished rounds
+        for(Round r : finishedRounds){
+            g = r.getGameWithPlayer(p);
+            if (checkIfWinner(g, p)){
+                sets += WIN_SETS - g.getLosersWonSets();
+            } else {
+                sets += g.getLosersWonSets() - WIN_SETS;
+            }
+        }
+
+        return sets;
+    }
+
+    public Player getOpponent(Player p) throws NoSuchElementException {
+        for (Game game : games) {
+            if (game.getP1().equals(p)) {
+                return game.getP2();
+            }
+            if (game.getP2().equals(p)) {
+                return game.getP1();
+            }
+        }
+        throw new NoSuchElementException(String.format("Player %s not found", p.getName()));
     }
 
     private boolean checkIfWinner(Game g, Player p){

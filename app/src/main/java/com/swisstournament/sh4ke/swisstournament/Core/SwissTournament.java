@@ -2,8 +2,9 @@ package com.swisstournament.sh4ke.swisstournament.Core;
 
 import com.swisstournament.sh4ke.swisstournament.Core.Player.ByePlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
+import com.swisstournament.sh4ke.swisstournament.Core.Ranking.Ranking;
+import com.swisstournament.sh4ke.swisstournament.Core.Ranking.SetsRanking;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,8 +96,22 @@ public class SwissTournament {
         }
     }
 
+    public void endCurrentRound() {
+        if (canStartNextRound()) {
+            Round oldRound = currentRound;
+
+            if(oldRound != null) {
+                finishedRounds.add(oldRound);
+                Ranking ranking = createRanking(oldRound);
+                rankings.add(ranking);
+            }
+        }else{
+            throw new IllegalStateException("Round not Finished");
+        }
+    }
+
     private Ranking createRanking(Round round) {
-        return new Ranking(round, finishedRounds);
+        return new SetsRanking(round, finishedRounds);
     }
 
     public int getMinPossibleRounds() {
@@ -124,4 +139,6 @@ public class SwissTournament {
         }
         return null;
     }
+
+
 }

@@ -109,7 +109,7 @@ public class GameTest {
     public void getCorrectLosersWonGames1Test() {
         g.enterResult(2, 3);
         try {
-            assertEquals(2, g.getLosersWonGames());
+            assertEquals(2, g.getLosersWonSets());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,7 +119,7 @@ public class GameTest {
     public void getCorrectLosersWonGames2Test() {
         g.enterResult(3, 2);
         try {
-            assertEquals(2, g.getLosersWonGames());
+            assertEquals(2, g.getLosersWonSets());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,6 +146,6 @@ public class GameTest {
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("this game is not played yet");
 
-        g.getLosersWonGames();
+        g.getLosersWonSets();
     }
 }

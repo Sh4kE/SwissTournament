@@ -60,7 +60,7 @@ public class Game {
         throw new IllegalStateException("this game is not played yet");
     }
 
-    public int getLosersWonGames() throws IllegalStateException {
+    public int getLosersWonSets() throws IllegalStateException {
         if (isFinished()) {
             return (won_p1 < won_p2) ? won_p1 : won_p2;
         }
