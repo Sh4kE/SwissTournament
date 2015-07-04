@@ -1,7 +1,6 @@
 package com.swisstournament.sh4ke.swisstournament.Core.Ranking;
 
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
-import com.swisstournament.sh4ke.swisstournament.Core.Player.UnknownPlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Round;
 
 import java.util.List;

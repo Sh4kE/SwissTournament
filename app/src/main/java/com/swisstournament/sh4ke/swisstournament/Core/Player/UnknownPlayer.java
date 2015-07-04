@@ -21,10 +21,6 @@ public class UnknownPlayer extends Player {
         if (!(o instanceof Player)) return false;
 
         Player otherPlayer = (HumanPlayer) o;
-        if (otherPlayer instanceof UnknownPlayer) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(otherPlayer instanceof UnknownPlayer);
     }
 }
