@@ -4,6 +4,7 @@ import com.swisstournament.sh4ke.swisstournament.BuildConfig;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
 import com.swisstournament.sh4ke.swisstournament.Core.Ranking.Ranking;
+import com.swisstournament.sh4ke.swisstournament.Core.Ranking.RankingType;
 
 import junit.framework.Assert;
 
@@ -57,11 +58,7 @@ public class TournamentTest {
     }
 
     private void startRoundWithPlayers(int number_of_players) {
-        t = new SwissTournament();
-        for (int i = 0; i < number_of_players; i++) {
-            t.addPlayer(players.get(i));
-        }
-        assertTrue(t.canStartTournament());
+        startTournamentWithPlayers(number_of_players);
         t.startTournament();
         assertTrue(t.isStarted());
 
@@ -281,51 +278,7 @@ public class TournamentTest {
         assertTrue(t.canStartNextRound());
     }
 
-    @Test
-    public void getCurrentRankingWithNoRoundFinishedFailsTest() {
-        startRoundWithPlayers(2);
 
-        Ranking r = t.getCurrentRanking();
-        assertEquals(null, r);
-    }
-
-    @Test
-    public void getCurrentRankingWith2PlayersPlayer1WinsTest() {
-        startRoundWithPlayers(2);
-        Round r = t.getCurrentRound();
-        Game g = r.getNextUnfinishedGame();
-
-        g.enterResult(3,2);
-        Player winner = g.getWinner();
-        Player loser = g.getLoser();
-
-        t.endCurrentRound();
-
-        Ranking ranking = t.getCurrentRanking();
-        assertNotNull(ranking);
-
-        assertEquals(winner, ranking.getRank(1));
-        assertEquals(loser, ranking.getRank(2));
-    }
-
-    @Test
-    public void getCurrentRankingWith2PlayersPlayer2WinsTest() {
-        startRoundWithPlayers(2);
-        Round r = t.getCurrentRound();
-        Game g = r.getNextUnfinishedGame();
-
-        g.enterResult(2,3);
-        Player winner = g.getWinner();
-        Player loser = g.getLoser();
-
-        t.endCurrentRound();
-
-        Ranking ranking = t.getCurrentRanking();
-        assertNotNull(ranking);
-
-        assertEquals(winner, ranking.getRank(1));
-        assertEquals(loser, ranking.getRank(2));
-    }
 
     @Test
     public void getMinPossibleRoundsWithPowerZeroTest() {

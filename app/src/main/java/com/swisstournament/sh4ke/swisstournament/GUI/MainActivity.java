@@ -1,9 +1,11 @@
-package com.swisstournament.sh4ke.swisstournament;
+package com.swisstournament.sh4ke.swisstournament.GUI;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.swisstournament.sh4ke.swisstournament.R;
 
 
 public class MainActivity extends AppCompatActivity {

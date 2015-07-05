@@ -1,4 +1,4 @@
-package com.swisstournament.sh4ke.swisstournament.Core;
+package com.swisstournament.sh4ke.swisstournament.Core.Player;
 
 import com.swisstournament.sh4ke.swisstournament.BuildConfig;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;

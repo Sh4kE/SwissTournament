@@ -3,6 +3,7 @@ package com.swisstournament.sh4ke.swisstournament.Core;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.ByePlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
 import com.swisstournament.sh4ke.swisstournament.Core.Ranking.Ranking;
+import com.swisstournament.sh4ke.swisstournament.Core.Ranking.RankingType;
 import com.swisstournament.sh4ke.swisstournament.Core.Ranking.SetsRanking;
 
 import java.util.ArrayList;
@@ -133,7 +134,7 @@ public class SwissTournament {
         return Integer.MAX_VALUE;
     }
 
-    public Ranking getCurrentRanking() {
+    public Ranking getCurrentRanking(RankingType type) {
         if (!rankings.isEmpty()){
             return rankings.get(rankings.size()-1);
         }

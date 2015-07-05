@@ -1,6 +1,10 @@
-package com.swisstournament.sh4ke.swisstournament;
+package com.swisstournament.sh4ke.swisstournament.GUI;
 
 import android.widget.TextView;
+
+import com.swisstournament.sh4ke.swisstournament.BuildConfig;
+import com.swisstournament.sh4ke.swisstournament.GUI.MainActivity;
+import com.swisstournament.sh4ke.swisstournament.R;
 
 import org.junit.Before;
 import org.junit.Test;
