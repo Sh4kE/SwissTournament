@@ -19,6 +19,7 @@ public class Round {
     private List<Round> finishedRounds;
     private List<Game> games;
     private boolean started;
+    private boolean finished;
 
     public Round(List<Player> players) {
         this.finishedRounds = new ArrayList();
@@ -144,8 +145,19 @@ public class Round {
         return this.started;
     }
 
+    public boolean endRound(){
+        if(canBeFinished()){
+            finished = true;
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isFinished(){
+        return finished;
+    }
 
-    public boolean isFinished() {
+    public boolean canBeFinished() {
         for (Game game : games) {
             if (!game.isFinished()) {
                 return false;

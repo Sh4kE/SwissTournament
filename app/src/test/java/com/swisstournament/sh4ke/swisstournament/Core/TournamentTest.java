@@ -63,6 +63,7 @@ public class TournamentTest {
         assertTrue(t.isStarted());
 
         assertTrue(t.canStartNextRound());
+        t.endCurrentRound();
         t.startNextRound();
         assertFalse(t.canStartNextRound());
     }
@@ -138,7 +139,7 @@ public class TournamentTest {
     public void canPlayOneRoundWithFourPlayersTest() {
         startRoundWithPlayers(4);
 
-        while (!t.getCurrentRound().isFinished()) {
+        while (!t.getCurrentRound().canBeFinished()) {
             Game g = t.getCurrentRound().getNextUnfinishedGame();
             Player p1 = g.getP1();
             Player p2 = g.getP2();
@@ -156,6 +157,7 @@ public class TournamentTest {
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("Round not Finished");
 
+        t.endCurrentRound();
         t.startNextRound();
     }
 
@@ -191,6 +193,7 @@ public class TournamentTest {
         g1.enterResult(3, 2);
         assertEquals(null, currentRound.getNextUnfinishedGame());
         assertTrue(t.canStartNextRound());
+        t.endCurrentRound();
         t.startNextRound();
         Round nextRound = t.getCurrentRound();
         assertNotEquals(currentRound, nextRound);
@@ -220,6 +223,7 @@ public class TournamentTest {
 
         assertEquals(null, t.getCurrentRound().getNextUnfinishedGame());
         assertTrue(t.canStartNextRound());
+        t.endCurrentRound();
         t.startNextRound();
 
         Game g3 = t.getCurrentRound().getNextUnfinishedGame();
@@ -238,22 +242,17 @@ public class TournamentTest {
     @Test
     public void ThreePlayersWithOneWinTest() {
         startRoundWithPlayers(6);
-
-        Game[] games = new Game[3];
-
-        for (int i = 0; i < 3; i++) {
-            games[i] = playNextGame();
-        }
-
-        assertEquals(null, t.getCurrentRound().getNextUnfinishedGame());
-        assertTrue(t.canStartNextRound());
+        endCurrentRound();
         t.startNextRound();
 
         Game g = t.getCurrentRound().getNextUnfinishedGame();
         Player p1 = g.getP1();
         Player p2 = g.getP2();
-        Assert.assertEquals(1, t.getCurrentRound().getPlayerWins(p1));
-        Assert.assertEquals(1, t.getCurrentRound().getPlayerWins(p2));
+        System.out.println("p1: " + p1 + ", wins: " + t.getCurrentRound().getPlayerWins(p1));
+        System.out.println("p2: " + p2 + ", wins: " + t.getCurrentRound().getPlayerWins(p2));
+        boolean bothHaveOneWin = t.getCurrentRound().getPlayerWins(p1) == 1 && t.getCurrentRound().getPlayerWins(p2) == 1;
+        System.out.println(g);
+        Assert.assertTrue(bothHaveOneWin);
 
         playNextGame();
 
@@ -278,7 +277,20 @@ public class TournamentTest {
         assertTrue(t.canStartNextRound());
     }
 
+    @Test
+    public void testTournamentTest() {
+        int player_count = 4;
+        startRoundWithPlayers(player_count);
 
+        playTournament();
+
+        Ranking r = t.getCurrentRanking(RankingType.SETS);
+        List<Player> real_ladder = new ArrayList<>();
+        for(int i = 0; i < player_count; i++){
+            real_ladder.add(players.get(i));
+        }
+        assertEquals(real_ladder, r.getLadder());
+    }
 
     @Test
     public void getMinPossibleRoundsWithPowerZeroTest() {
@@ -294,6 +306,15 @@ public class TournamentTest {
         }
     }
 
+    @Test
+    public void getMaxPossibleRoundsTest() {
+        for (int i = 2; i <= 32; i++) {
+            startRoundWithPlayers(i);
+            int max_rounds = t.registeredPlayerCount() - 1;
+            assertEquals(max_rounds, t.getMaxPossibleRounds());
+        }
+    }
+
     private int findMaxPossibleSubscript(int p) {
         int i = 0;
         while (Math.pow(2, i) < p) {
@@ -302,9 +323,39 @@ public class TournamentTest {
         return i;
     }
 
-    private Game playNextGame() {
+    private void playTournament(){
+        int max_rounds = t.getMaxPossibleRounds();
+
+        for(int i = 0; i < max_rounds-1; i++){
+            endCurrentRound();
+            t.startNextRound();
+        }
+        endCurrentRound();
+    }
+
+    /**
+     * Ends the current Round and starts the next.
+     */
+    private void endCurrentRound() {
+        playCurrentRound();
+        t.endCurrentRound();
+    }
+
+    /**
+     * Plays all games in the current Round.
+     * In every game the first player wins 3:2.
+     */
+    private void playCurrentRound() {
+        Round r = t.getCurrentRound();
+        for(Game g : r.getAllUnfinishedGames()){
+            g.enterResult(3, 2);
+        }
+        assertEquals(null, t.getCurrentRound().getNextUnfinishedGame());
+        Assert.assertTrue(t.canStartNextRound());
+    }
+
+    private void playNextGame() {
         Game g = t.getCurrentRound().getNextUnfinishedGame();
         g.enterResult(3, 2);
-        return g;
     }
 }

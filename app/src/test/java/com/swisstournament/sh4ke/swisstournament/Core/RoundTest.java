@@ -47,7 +47,7 @@ public class RoundTest {
         assertTrue(r.canStart());
         r.start();
         assertTrue(r.isStarted());
-        assertFalse(r.isFinished());
+        assertFalse(r.canBeFinished());
     }
 
     private boolean playerIsInGame(Player p, Game g){
@@ -108,7 +108,7 @@ public class RoundTest {
         g.enterResult(3, 2);
         assertEquals(null, r.getNextUnfinishedGame());
         assertTrue(g.isFinished());
-        assertTrue(r.isFinished());
+        assertTrue(r.canBeFinished());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class RoundTest {
         createSimpleRoundWithPlayers(2);
         Game g = r.getNextUnfinishedGame();
         r.enterResult(players.get(0), 3, players.get(1), 2);
-        assertTrue(r.isFinished());
+        assertTrue(r.canBeFinished());
         assertNotEquals(g, r.getNextUnfinishedGame());
     }
 
@@ -145,7 +145,7 @@ public class RoundTest {
         thrown.expect(InvalidParameterException.class);
         r.enterResult(new HumanPlayer("p3"), 3, players.get(0), 2);
 
-        assertFalse(r.isFinished());
+        assertFalse(r.canBeFinished());
         assertEquals(g, r.getNextUnfinishedGame());
     }
 

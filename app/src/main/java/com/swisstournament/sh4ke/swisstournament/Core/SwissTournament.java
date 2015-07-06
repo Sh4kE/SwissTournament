@@ -70,7 +70,7 @@ public class SwissTournament {
 
     public boolean canStartNextRound() {
         if (this.isStarted()) {
-            return currentRound == null || currentRound.isFinished();
+            return currentRound == null || currentRound.canBeFinished();
         }
         return false;
     }
@@ -81,20 +81,8 @@ public class SwissTournament {
      * @return returns the last finished round
      */
     public void startNextRound() throws IllegalStateException {
-        if (canStartNextRound()) {
-            Round oldRound = currentRound;
-
-            if(oldRound != null) {
-                finishedRounds.add(oldRound);
-                Ranking r = createRanking(oldRound);
-                rankings.add(r);
-            }
-
-            currentRound = new Round(players, finishedRounds);
-            currentRound.start();
-        }else{
-            throw new IllegalStateException("Round not Finished");
-        }
+        currentRound = new Round(players, finishedRounds);
+        currentRound.start();
     }
 
     public void endCurrentRound() {
@@ -131,7 +119,7 @@ public class SwissTournament {
         if (isStarted()) {
             return registeredPlayerCount() - 1;
         }
-        return Integer.MAX_VALUE;
+        return 0;
     }
 
     public Ranking getCurrentRanking(RankingType type) {
