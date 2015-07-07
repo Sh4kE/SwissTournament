@@ -248,9 +248,9 @@ public class TournamentTest {
         Game g = t.getCurrentRound().getNextUnfinishedGame();
         Player p1 = g.getP1();
         Player p2 = g.getP2();
-        System.out.println("p1: " + p1 + ", wins: " + t.getCurrentRound().getPlayerWins(p1));
-        System.out.println("p2: " + p2 + ", wins: " + t.getCurrentRound().getPlayerWins(p2));
-        boolean bothHaveOneWin = t.getCurrentRound().getPlayerWins(p1) == 1 && t.getCurrentRound().getPlayerWins(p2) == 1;
+        System.out.println("p1: " + p1 + ", wins: " + t.getCurrentRound().getWonGames(p1));
+        System.out.println("p2: " + p2 + ", wins: " + t.getCurrentRound().getWonGames(p2));
+        boolean bothHaveOneWin = t.getCurrentRound().getWonGames(p1) == 1 && t.getCurrentRound().getWonGames(p2) == 1;
         System.out.println(g);
         Assert.assertTrue(bothHaveOneWin);
 
@@ -259,8 +259,8 @@ public class TournamentTest {
         g = t.getCurrentRound().getNextUnfinishedGame();
         p1 = g.getP1();
         p2 = g.getP2();
-        boolean oneHasOneWin = t.getCurrentRound().getPlayerWins(p1) == 1 || t.getCurrentRound().getPlayerWins(p2) == 1;
-        boolean oneHasZeroWins = t.getCurrentRound().getPlayerWins(p1) == 0 || t.getCurrentRound().getPlayerWins(p2) == 0;
+        boolean oneHasOneWin = t.getCurrentRound().getWonGames(p1) == 1 || t.getCurrentRound().getWonGames(p2) == 1;
+        boolean oneHasZeroWins = t.getCurrentRound().getWonGames(p1) == 0 || t.getCurrentRound().getWonGames(p2) == 0;
         Assert.assertTrue(oneHasOneWin);
         Assert.assertTrue(oneHasZeroWins);
 
@@ -269,7 +269,7 @@ public class TournamentTest {
         g = t.getCurrentRound().getNextUnfinishedGame();
         p1 = g.getP1();
         p2 = g.getP2();
-        boolean bothHaveZeroWins = t.getCurrentRound().getPlayerWins(p1) == 0 && t.getCurrentRound().getPlayerWins(p2) == 0;
+        boolean bothHaveZeroWins = t.getCurrentRound().getWonGames(p1) == 0 && t.getCurrentRound().getWonGames(p2) == 0;
         Assert.assertTrue(bothHaveZeroWins);
 
         playNextGame();
@@ -278,17 +278,20 @@ public class TournamentTest {
     }
 
     @Test
-    public void testTournamentTest() {
-        int player_count = 4;
+    public void testTournamentWithSixPlayersTest() {
+        int player_count = 6;
         startRoundWithPlayers(player_count);
 
         playTournament();
 
-        Ranking r = t.getCurrentRanking(RankingType.SETS);
+        Ranking r = t.getCurrentRanking(RankingType.WINS_AND_SETS);
         List<Player> real_ladder = new ArrayList<>();
-        for(int i = 0; i < player_count; i++){
-            real_ladder.add(players.get(i));
-        }
+        real_ladder.add(players.get(0));
+        real_ladder.add(players.get(2));
+        real_ladder.add(players.get(3));
+        real_ladder.add(players.get(4));
+        real_ladder.add(players.get(1));
+        real_ladder.add(players.get(5));
         assertEquals(real_ladder, r.getLadder());
     }
 

@@ -40,13 +40,28 @@ public class Round {
     }
 
     private List<Game> createGames() {
-        List<Game> games = new ArrayList();
         List<Player> playerQueue = new ArrayList(players);
+        playerQueue = sortPlayersBasedOnWins(playerQueue);
+        return createGames(playerQueue, 0);
+    }
+
+    private List<Game> createGames(List<Player> playerQueue, int depth) {
+        if(depth > playerQueue.size()){
+            throw new IllegalStateException("Can't create any more matches for players: " + playerQueue);
+        }
+        List<Game> games = new ArrayList();
+
+        List<Player> playerQueueBackup = new ArrayList<>(playerQueue);
 
         while (!playerQueue.isEmpty()) {
             Player p = playerQueue.remove(0);
-            Game g = createGame(p, playerQueue);
-
+            Game g;
+            try {
+                g = createGame(p, playerQueue);
+            } catch (IllegalStateException e) {
+                // start new with conflicting player first
+                return createGames(sortPlayerAtFront(playerQueueBackup, p), depth + 1);
+            }
             // remove the opponent from the queue as well
             playerQueue.remove(g.getP2());
 
@@ -56,6 +71,16 @@ public class Round {
         return games;
     }
 
+    private List<Player> sortPlayerAtFront(List<Player> playerQueue, Player p) {
+        int index = playerQueue.indexOf(p);
+        if (index == -1) {
+            throw new IllegalArgumentException("Player " + p + " not found in " + playerQueue + ". Can't sort him at front");
+        }
+        playerQueue.remove(index);
+        playerQueue.add(0, p);
+        return playerQueue;
+    }
+
     /**
      * @param p the player
      * @return a new Game with a random player, which p1 has not yet played against.
@@ -63,7 +88,8 @@ public class Round {
     private Game createGame(Player p, List<Player> playerQueue) {
         List<Player> possiblePlayers = new ArrayList(playerQueue);
 
-        possiblePlayers.removeAll(getAllFormerOpponents(p));
+        possiblePlayers.removeAll(formerOpponentsFrom(p));
+        possiblePlayers.removeAll(playersWithMoreWinsThan(p));
         Player opponent = choosePlayerWithSameOrNearlySameWins(possiblePlayers);
         if (opponent == null) {
             throw new IllegalStateException("Can't find opponent for player " + p);
@@ -71,7 +97,7 @@ public class Round {
         return new Game(p, opponent);
     }
 
-    private List<Player> getAllFormerOpponents(Player p) throws NoSuchElementException {
+    private List<Player> formerOpponentsFrom(Player p) throws NoSuchElementException {
         List<Player> opponents = new ArrayList();
 
         for (Round r : finishedRounds) {
@@ -81,6 +107,24 @@ public class Round {
         return opponents;
     }
 
+    private List<Player> playersWithMoreWinsThan(Player p) throws NoSuchElementException {
+        int won_games_of_player = getWonGames(p);
+        List<Player> playersWithMoreWins = new ArrayList();
+
+        for (Player player : players){
+            if(getWonGames(player) > won_games_of_player){
+                playersWithMoreWins.add(player);
+            }
+        }
+        return playersWithMoreWins;
+    }
+
+    /**
+     * Assumes that all former opponents have been eliminated from the list of players.
+     *
+     * @param players
+     * @return
+     */
     private Player choosePlayerWithSameOrNearlySameWins(List<Player> players) {
         players = sortPlayersBasedOnWins(players);
         if (players.size() > 0) {
@@ -89,11 +133,11 @@ public class Round {
         return null;
     }
 
-    private List<Player> sortPlayersBasedOnWins(List<Player> players){
+    private List<Player> sortPlayersBasedOnWins(List<Player> players) {
         Collections.sort(players, new Comparator<Player>() {
             public int compare(Player p1, Player p2) {
-                int winsP1 = getPlayerWins(p1);
-                int winsP2 = getPlayerWins(p2);
+                int winsP1 = getWonGames(p1);
+                int winsP2 = getWonGames(p2);
                 if (winsP1 == winsP2)
                     return 0;
                 return winsP1 >= winsP2 ? -1 : 1;
@@ -119,9 +163,9 @@ public class Round {
     }
 
     public Game getGameWithPlayer(Player p) {
-        if(games != null){
-            for(Game g: games){
-                if(g.getP1().equals(p) || g.getP2().equals(p)){
+        if (games != null) {
+            for (Game g : games) {
+                if (g.getP1().equals(p) || g.getP2().equals(p)) {
                     return g;
                 }
             }
@@ -145,15 +189,15 @@ public class Round {
         return this.started;
     }
 
-    public boolean endRound(){
-        if(canBeFinished()){
+    public boolean endRound() {
+        if (canBeFinished()) {
             finished = true;
             return true;
         }
         return false;
     }
-    
-    public boolean isFinished(){
+
+    public boolean isFinished() {
         return finished;
     }
 
@@ -199,19 +243,19 @@ public class Round {
         return players;
     }
 
-    public int getPlayerWins(Player p){
+    public int getWonGames(Player p) {
         int wins = 0;
 
         // current round
         Game g = getGameWithPlayer(p);
-        if (checkIfWinner(g, p)){
+        if (checkIfWinner(g, p)) {
             wins++;
         }
 
         // finished rounds
-        for(Round r : finishedRounds){
+        for (Round r : finishedRounds) {
             g = r.getGameWithPlayer(p);
-            if (checkIfWinner(g, p)){
+            if (checkIfWinner(g, p)) {
                 wins++;
             }
         }
@@ -219,21 +263,23 @@ public class Round {
         return wins;
     }
 
-    public int getWonSets(Player p){
+    public int getWonSets(Player p) {
         int sets = 0;
 
         // current round
         Game g = getGameWithPlayer(p);
-        if (checkIfWinner(g, p)){
-            sets += WIN_SETS;
-        } else {
-            sets += g.getLosersWonSets();
+        if(g != null){
+            if (checkIfWinner(g, p)) {
+                sets += WIN_SETS;
+            } else {
+                sets += g.getLosersWonSets();
+            }
         }
 
         // finished rounds
-        for(Round r : finishedRounds){
+        for (Round r : finishedRounds) {
             g = r.getGameWithPlayer(p);
-            if (checkIfWinner(g, p)){
+            if (checkIfWinner(g, p)) {
                 sets += 3;
             } else {
                 sets += g.getLosersWonSets();
@@ -243,21 +289,21 @@ public class Round {
         return sets;
     }
 
-    public int getWithdrawnSets(Player p){
+    public int getWithdrawnSets(Player p) {
         int sets = 0;
 
         // current round
         Game g = getGameWithPlayer(p);
-        if (checkIfWinner(g, p)){
+        if (checkIfWinner(g, p)) {
             sets += WIN_SETS - g.getLosersWonSets();
         } else {
             sets += g.getLosersWonSets() - WIN_SETS;
         }
 
         // finished rounds
-        for(Round r : finishedRounds){
+        for (Round r : finishedRounds) {
             g = r.getGameWithPlayer(p);
-            if (checkIfWinner(g, p)){
+            if (checkIfWinner(g, p)) {
                 sets += WIN_SETS - g.getLosersWonSets();
             } else {
                 sets += g.getLosersWonSets() - WIN_SETS;
@@ -279,9 +325,9 @@ public class Round {
         throw new NoSuchElementException(String.format("Player %s not found", p.getName()));
     }
 
-    private boolean checkIfWinner(Game g, Player p){
-        if(g != null && g.isFinished()){
-            if(g.getWinner().equals(p)){
+    private boolean checkIfWinner(Game g, Player p) {
+        if (g != null && g.isFinished()) {
+            if (g.getWinner().equals(p)) {
                 return true;
             }
         }

@@ -4,8 +4,6 @@ import com.swisstournament.sh4ke.swisstournament.BuildConfig;
 import com.swisstournament.sh4ke.swisstournament.Core.Game;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.HumanPlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
-import com.swisstournament.sh4ke.swisstournament.Core.Ranking.Ranking;
-import com.swisstournament.sh4ke.swisstournament.Core.Ranking.RankingType;
 import com.swisstournament.sh4ke.swisstournament.Core.Round;
 import com.swisstournament.sh4ke.swisstournament.Core.SwissTournament;
 
@@ -74,7 +72,7 @@ public class RankingTest {
     public void getCurrentSetsRankingWithNoRoundFinishedFailsTest() {
         startRoundWithPlayers(2);
 
-        Ranking r = t.getCurrentRanking(RankingType.SETS);
+        Ranking r = t.getCurrentRanking(RankingType.WINS_AND_SETS);
         assertEquals(null, r);
     }
 
@@ -90,7 +88,7 @@ public class RankingTest {
 
         t.endCurrentRound();
 
-        Ranking ranking = t.getCurrentRanking(RankingType.SETS);
+        Ranking ranking = t.getCurrentRanking(RankingType.WINS_AND_SETS);
         assertNotNull(ranking);
 
         assertEquals(winner, ranking.getRank(1));
@@ -109,7 +107,7 @@ public class RankingTest {
 
         t.endCurrentRound();
 
-        Ranking ranking = t.getCurrentRanking(RankingType.SETS);
+        Ranking ranking = t.getCurrentRanking(RankingType.WINS_AND_SETS);
         assertNotNull(ranking);
 
         assertEquals(winner, ranking.getRank(1));

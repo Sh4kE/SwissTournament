@@ -4,7 +4,7 @@ import com.swisstournament.sh4ke.swisstournament.Core.Player.ByePlayer;
 import com.swisstournament.sh4ke.swisstournament.Core.Player.Player;
 import com.swisstournament.sh4ke.swisstournament.Core.Ranking.Ranking;
 import com.swisstournament.sh4ke.swisstournament.Core.Ranking.RankingType;
-import com.swisstournament.sh4ke.swisstournament.Core.Ranking.SetsRanking;
+import com.swisstournament.sh4ke.swisstournament.Core.Ranking.WinsAndSetsRanking;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,7 @@ public class SwissTournament {
     }
 
     private Ranking createRanking(Round round) {
-        return new SetsRanking(round, finishedRounds);
+        return new WinsAndSetsRanking(round, finishedRounds);
     }
 
     public int getMinPossibleRounds() {

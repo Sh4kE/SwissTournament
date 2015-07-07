@@ -13,11 +13,11 @@ import java.util.TreeMap;
 /**
  * Created by sh4ke on 04.07.15.
  */
-public class SetsRanking extends Ranking {
+public class WinsAndSetsRanking extends Ranking {
 
     List<Player> ladder;
 
-    public SetsRanking(Round round, List<Round> formerRounds) {
+    public WinsAndSetsRanking(Round round, List<Round> formerRounds) {
         super(round, formerRounds);
         ladder = createLadder();
     }
