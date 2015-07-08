@@ -24,3 +24,6 @@ android:
     - sys-img-armeabi-v7a-android-21
     - sys-img-x86-android-17
     - sys-img-armeabi-v7a-android-15
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
