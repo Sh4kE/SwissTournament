@@ -337,7 +337,7 @@ public class TournamentTest {
     }
 
     /**
-     * Ends the current Round and starts the next.
+     * Plays and ends the current Round.
      */
     private void endCurrentRound() {
         playCurrentRound();
